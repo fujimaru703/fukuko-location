@@ -7,7 +7,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 // --- CORS対応プロキシ経由でGTFS-RT取得（Cloudflare WorkersのURLに置き換えてください） ---
-const proxyUrl = 'https://your-worker-subdomain.workers.dev';
+const proxyUrl = 'https://fujimaru703.workers.dev';
 const gtfsRtSource = 'https://www.ptd-hs.jp/GetVehiclePosition?uid=zvL5QEwjF2YDmBaVcHbIM5lTLgu1&agency_id=0704&output=json';
 const url = `${proxyUrl}/?url=${encodeURIComponent(gtfsRtSource)}`;
 
