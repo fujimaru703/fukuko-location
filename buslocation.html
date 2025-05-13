@@ -43,18 +43,18 @@
         }
 
         // 表示データを更新
-        data.vehicles.forEach((bus => {
-          const { id, latitude, longitude, label } = bus;
+        (data.vehicles || []).forEach(bus => {
+  const { id, latitude, longitude, label } = bus;
 
-          if (markers[id]) {
-            markers[id].setLatLng([latitude, longitude]).setOpacity(1);
-          } else {
-            const marker = L.marker([latitude, longitude])
-              .bindPopup(`Bus: ${label || id}`)
-              .addTo(map);
-            markers[id] = marker;
-          }
-        });
+  if (markers[id]) {
+    markers[id].setLatLng([latitude, longitude]).setOpacity(1);
+  } else {
+    const marker = L.marker([latitude, longitude])
+      .bindPopup(`Bus: ${label || id}`)
+      .addTo(map);
+    markers[id] = marker;
+  }
+});
 
       } catch (e) {
         console.error("GTFS-RT取得エラー:", e);
