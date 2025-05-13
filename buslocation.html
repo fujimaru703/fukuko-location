@@ -1,65 +1,75 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GTFS-RT バスロケーションマップ</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GTFS-RT Bus Location</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <style>
-    html, body, #map {
-      margin: 0;
-      padding: 0;
+    #map {
       width: 100%;
-      height: 100vh;
+      height: 500px;
     }
   </style>
 </head>
 <body>
+  <h1>GTFS-RT Bus Location</h1>
   <div id="map"></div>
-
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script>
-    // 地図初期化（中心位置・ズームは指定しない）
-    const map = L.map('map');
+    // Leafletマップの設定
+    const map = L.map('map').setView([37.40216827392578, 140.38511657714844], 13);  // 初期位置を設定
+    const map = L.map('map');  // 初期位置の設定を削除
 
-    // OSMタイルレイヤー
+    // OSMのタイルレイヤーを追加
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    // バスのマーカーを格納するための配列
     let markers = [];
 
+    // GTFS-RTデータを取得し、マップ上にバスの位置を表示
     async function fetchAndUpdate() {
       try {
-        const response = await fetch('https://morning-sun-eb88.fujimaru703.workers.dev/');
+        const response = await fetch('https://morning-sun-eb88.fujimaru703.workers.dev/'); // Cloudflare WorkerのURLを指定
         const data = await response.json();
 
-        // 古いマーカー削除
-        markers.forEach(marker => map.removeLayer(marker));
-        markers = [];
+        // マーカーを削除（新しいデータで更新するため）
+        markers.forEach(marker => {
+          map.removeLayer(marker);
+        });
+        markers = [];  // マーカー配列をリセット
 
-        // バスデータ処理
+        // GTFS-RTのデータが含まれている場合
         if (data.entity && Array.isArray(data.entity)) {
           data.entity.forEach(entity => {
-            if (entity.vehicle && entity.vehicle.position) {
-              const { latitude, longitude } = entity.vehicle.position;
-              const label = entity.vehicle.label || entity.id;
+@@ -41,21 +50,29 @@
+              // バスの位置をLeafletマップにマーカーとして追加
+              const marker = L.marker([position.latitude, position.longitude]).addTo(map);
+              marker.bindPopup(`<b>${vehicleLabel}</b><br>緯度: ${position.latitude}<br>経度: ${position.longitude}`);
 
-              const marker = L.marker([latitude, longitude]).addTo(map)
-                .bindPopup(`<b>車両番号: ${label}</b>`);
-
+              // マーカーを配列に格納
               markers.push(marker);
+
+              // 初回データで地図の中心を設定する
+              if (markers.length === 1) {
+                map.setView([position.latitude, position.longitude], 13);
+              }
             }
           });
         } else {
-          console.error('無効なデータ形式:', data);
+          console.error('予期しないデータ形式:', data);
         }
-      } catch (err) {
-        console.error('GTFS-RT取得エラー:', err);
+      } catch (error) {
+        console.error('GTFS-RT取得エラー:', error);
       }
     }
 
-    setInterval(fetchAndUpdate, 10000);
+    // 定期的にGTFS-RTデータを取得して地図を更新
+    setInterval(fetchAndUpdate, 10000);  // 10秒ごとに更新
+
+    // 初回データ取得
     fetchAndUpdate();
   </script>
 </body>
