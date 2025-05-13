@@ -47,7 +47,7 @@
           data.entity.forEach(entity => {
             if (entity.vehicle && entity.vehicle.position) {
               const position = entity.vehicle.position;
-              const vehicleLabel = entity.vehicle.label;
+              const vehicleLabel = entity.vehicle..vehicle.label;
 
               // バスの位置をLeafletマップにマーカーとして追加
               const marker = L.marker([position.latitude, position.longitude]).addTo(map);
@@ -56,10 +56,6 @@
               // マーカーを配列に格納
               markers.push(marker);
 
-              // 初回データで地図の中心を設定する
-              if (markers.length === 1) {
-                map.setView([position.latitude, position.longitude], 13);
-              }
             }
           });
         } else {
