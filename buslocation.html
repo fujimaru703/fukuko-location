@@ -175,17 +175,90 @@
     const label234 = ['234'];
     
 
-    function getIconByLabel(label) {
-      if (redLabels.includes(label)) {
-        return iconRed;
-      } else if (blueLabels.includes(label)) {
-        return iconBlue;
-      } else if (greenLabels.includes(label)) {
-        return iconGreen;
-      } else {
-        return iconOrange; // デフォルト
-      }
-    }
+    // ラベルとアイコンの対応関係をオブジェクトとして定義
+const labelIconMap = new Map();
+
+// 各ラベル配列に対して、対応するアイコンを登録
+label290.forEach(l => labelIconMap.set(l, icon290));
+label557.forEach(l => labelIconMap.set(l, icon557));
+label600.forEach(l => labelIconMap.set(l, icon600));
+label875.forEach(l => labelIconMap.set(l, icon875));
+label1183.forEach(l => labelIconMap.set(l, icon1183));
+label1240.forEach(l => labelIconMap.set(l, icon1240));
+label1311.forEach(l => labelIconMap.set(l, icon1311));
+label1322.forEach(l => labelIconMap.set(l, icon1322));
+label1360.forEach(l => labelIconMap.set(l, icon1360));
+label1388.forEach(l => labelIconMap.set(l, icon1388));
+label1411.forEach(l => labelIconMap.set(l, icon1411));
+label1471.forEach(l => labelIconMap.set(l, icon1471));
+label1516.forEach(l => labelIconMap.set(l, icon1516));
+label1520.forEach(l => labelIconMap.set(l, icon1520));
+label1613.forEach(l => labelIconMap.set(l, icon1613));
+label1735.forEach(l => labelIconMap.set(l, icon1735));
+label1936.forEach(l => labelIconMap.set(l, icon1936));
+label2008.forEach(l => labelIconMap.set(l, icon2008));
+label2236.forEach(l => labelIconMap.set(l, icon2236));
+label2329.forEach(l => labelIconMap.set(l, icon2329));
+label2339.forEach(l => labelIconMap.set(l, icon2339));
+label2383.forEach(l => labelIconMap.set(l, icon2383));
+label2465.forEach(l => labelIconMap.set(l, icon2465));
+label2467.forEach(l => labelIconMap.set(l, icon2467));
+label2468.forEach(l => labelIconMap.set(l, icon2468));
+label2489.forEach(l => labelIconMap.set(l, icon2489));
+label2594.forEach(l => labelIconMap.set(l, icon2594));
+label2940.forEach(l => labelIconMap.set(l, icon2940));
+label2941.forEach(l => labelIconMap.set(l, icon2941));
+label7077.forEach(l => labelIconMap.set(l, icon7077));
+label7085.forEach(l => labelIconMap.set(l, icon7085));
+label7110.forEach(l => labelIconMap.set(l, icon7110));
+label7701.forEach(l => labelIconMap.set(l, icon7701));
+label8008.forEach(l => labelIconMap.set(l, icon8008));
+label8014.forEach(l => labelIconMap.set(l, icon8014));
+label8075.forEach(l => labelIconMap.set(l, icon8075));
+label8109.forEach(l => labelIconMap.set(l, icon8109));
+label8122.forEach(l => labelIconMap.set(l, icon8122));
+label8155.forEach(l => labelIconMap.set(l, icon8155));
+labelkanachan.forEach(l => labelIconMap.set(l, iconkanachan));
+labelkanachumio.forEach(l => labelIconMap.set(l, iconkanachumio));
+labelkanachumk.forEach(l => labelIconMap.set(l, iconkanachumk));
+labelkanachump35.forEach(l => labelIconMap.set(l, iconkanachump35));
+labelkanachump37.forEach(l => labelIconMap.set(l, iconkanachump37));
+labelkanehachi.forEach(l => labelIconMap.set(l, iconkanehachi));
+labelkantomidi.forEach(l => labelIconMap.set(l, iconkantomidi));
+labelkeiohr.forEach(l => labelIconMap.set(l, iconkeiohr));
+labelkeiomklong.forEach(l => labelIconMap.set(l, iconkeiomklong));
+labelklhr.forEach(l => labelIconMap.set(l, iconklhr));
+labelkllt.forEach(l => labelIconMap.set(l, iconkllt));
+labelkwskhr.forEach(l => labelIconMap.set(l, iconkwskhr));
+labelliesse.forEach(l => labelIconMap.set(l, iconliesse));
+labelmk.forEach(l => labelIconMap.set(l, iconmk));
+labelmk517.forEach(l => labelIconMap.set(l, iconmk517));
+labelmk619.forEach(l => labelIconMap.set(l, iconmk619));
+labelmkf.forEach(l => labelIconMap.set(l, iconmkf));
+labelmp35silver.forEach(l => labelIconMap.set(l, iconmp35silver));
+labelmp37.forEach(l => labelIconMap.set(l, iconmp37));
+labelmp37black.forEach(l => labelIconMap.set(l, iconmp37black));
+labelmp37silver.forEach(l => labelIconMap.set(l, iconmp37silver));
+labelmp317.forEach(l => labelIconMap.set(l, iconmp317));
+labelnankairj.forEach(l => labelIconMap.set(l, iconnankairj));
+labelpdgkr.forEach(l => labelIconMap.set(l, iconpdgkr));
+labelpdglr.forEach(l => labelIconMap.set(l, iconpdglr));
+labelpkhr.forEach(l => labelIconMap.set(l, iconpkhr));
+labelrakuraku.forEach(l => labelIconMap.set(l, iconrakuraku));
+labelrakurakuf.forEach(l => labelIconMap.set(l, iconrakurakuf));
+labelrinkomio.forEach(l => labelIconMap.set(l, iconrinkomio));
+labelserega.forEach(l => labelIconMap.set(l, iconserega));
+labeltoeimklong.forEach(l => labelIconMap.set(l, icontoeimklong));
+label234.forEach(l => labelIconMap.set(l, icon234));
+
+// デフォルトアイコンを設定（必要に応じて変更）
+const iconDefault = L.icon({ iconUrl: 'icon/default.png', iconSize: [32, 32] });
+
+// アイコン取得関数
+function getIconByLabel(label) {
+  return labelIconMap.get(label) || iconDefault;
+}
+
 
     // routes.txt を読み込んで route_id => route_long_name を取得
     async function loadRoutes() {
