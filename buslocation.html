@@ -18,18 +18,27 @@
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script>
     // Leafletマップの設定
-    const map = L.map('map').setView([37.40216827392578, 140.38511657714844], 13);  // 初期位置を設定
+    const map = L.map('map');  // 初期位置の設定を削除
 
     // OSMのタイルレイヤーを追加
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    // バスのマーカーを格納するための配列
+    let markers = [];
+
     // GTFS-RTデータを取得し、マップ上にバスの位置を表示
     async function fetchAndUpdate() {
       try {
         const response = await fetch('https://morning-sun-eb88.fujimaru703.workers.dev/'); // Cloudflare WorkerのURLを指定
         const data = await response.json();
+
+        // マーカーを削除（新しいデータで更新するため）
+        markers.forEach(marker => {
+          map.removeLayer(marker);
+        });
+        markers = [];  // マーカー配列をリセット
 
         // GTFS-RTのデータが含まれている場合
         if (data.entity && Array.isArray(data.entity)) {
@@ -41,6 +50,14 @@
               // バスの位置をLeafletマップにマーカーとして追加
               const marker = L.marker([position.latitude, position.longitude]).addTo(map);
               marker.bindPopup(`<b>${vehicleLabel}</b><br>緯度: ${position.latitude}<br>経度: ${position.longitude}`);
+
+              // マーカーを配列に格納
+              markers.push(marker);
+
+              // 初回データで地図の中心を設定する
+              if (markers.length === 1) {
+                map.setView([position.latitude, position.longitude], 13);
+              }
             }
           });
         } else {
