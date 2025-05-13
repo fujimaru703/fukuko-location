@@ -46,6 +46,7 @@
             if (entity.vehicle && entity.vehicle.position) {
               const position = entity.vehicle.position;
               const vehicleLabel = entity.vehicle.vehicle.label;
+              const routeid = entity.vehicle.tripe.routeId;
               const tripid = entity.vehicle.trip.tripId;
 
               if (!mapInitialized && index === 0) {
