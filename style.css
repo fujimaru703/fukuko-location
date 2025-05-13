@@ -1,78 +1,108 @@
 /* ベース設定 */
 body {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
-  color: #fff;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  font-family: 'Noto Sans JP', sans-serif;
+  background-color: #ffffff;
+  color: #333333;
 }
 
-/* ヒーロー */
-.hero {
-  height: 100vh;
+/* ヘッダー */
+.header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #dddddd;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  background: inherit;
-  position: relative;
-  overflow: hidden;
+  padding: 1rem 2rem;
 }
 
-.glass-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 3rem 2rem;
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #003366;
+}
+
+.nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+.nav a {
+  text-decoration: none;
+  color: #003366;
+  font-weight: 500;
+}
+
+.nav a:hover {
+  color: #0066cc;
+}
+
+/* メインコンテンツ */
+.main {
+  padding: 2rem;
+}
+
+.hero {
+  background-color: #f0f8ff;
+  padding: 2rem;
   text-align: center;
-  max-width: 600px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
-
-.glass-card h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-}
-
-.glass-card p {
-  font-size: 1.1rem;
+  border-radius: 8px;
   margin-bottom: 2rem;
 }
 
-.btn {
-  background: #00c6ff;
-  background: linear-gradient(to right, #0072ff, #00c6ff);
-  color: white;
-  padding: 0.8rem 1.8rem;
-  border: none;
-  border-radius: 30px;
+.hero h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #003366;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  color: #333333;
+}
+
+.news h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #003366;
+}
+
+.news ul {
+  list-style: none;
+  padding: 0;
+}
+
+.news li {
+  margin-bottom: 0.5rem;
+}
+
+.news a {
   text-decoration: none;
-  font-weight: 600;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  color: #0066cc;
 }
 
-.btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 5px 15px rgba(0, 198, 255, 0.5);
+.news a:hover {
+  text-decoration: underline;
 }
 
-/* コンテンツセクション */
-.content {
-  padding: 4rem 1rem;
-  max-width: 800px;
-  margin: 0 auto;
+/* フッター */
+.footer {
+  background-color: #f8f8f8;
   text-align: center;
-  background-color: #121212;
-  color: #ddd;
+  padding: 1rem;
+  border-top: 1px solid #dddddd;
+  color: #666666;
 }
 
-/* レスポンシブ */
-@media (max-width: 600px) {
-  .glass-card h1 {
-    font-size: 2rem;
-  }
-
-  .glass-card p {
-    font-size: 1rem;
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .nav ul {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 }
+
 
