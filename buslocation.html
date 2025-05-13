@@ -26,7 +26,7 @@
 
     // 1. 静的GTFS routes.txt（CSV）を読み込み route_id => route_long_name を辞書化
     async function loadRoutes() {
-      const res = await fetch('https://yourdomain.com/routes.txt'); // 公開URLに差し替えてください
+      const res = await fetch('https://raw.githubusercontent.com/fujimaru703/fukuko-location/refs/heads/main/routes.txt'); // 公開URLに差し替えてください
       const text = await res.text();
       const lines = text.trim().split('\n');
       const headers = lines[0].split(',');
