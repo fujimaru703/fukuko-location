@@ -26,6 +26,70 @@
     let routeNames = {}; // route_id => route_long_name
     let tripHeadsigns = {}; // trip_id => trip_headsign
 
+    // アイコンの定義
+    const icon290 = L.icon({ iconUrl: 'icon/290.png', iconSize: [32, 32] });
+    const icon557 = L.icon({ iconUrl: 'icon/557&2411.png', iconSize: [32, 32] });
+    const icon600 = L.icon({ iconUrl: 'icon/600.png', iconSize: [32, 32] });
+    const icon875 = L.icon({ iconUrl: 'icon/875.png', iconSize: [32, 32] });
+    const icon1183 = L.icon({ iconUrl: 'icon/1183.png', iconSize: [32, 32] });
+    const icon1240 = L.icon({ iconUrl: 'icon/1240.png', iconSize: [32, 32] });
+    const icon1311 = L.icon({ iconUrl: 'icon/1311.png', iconSize: [32, 32] });
+    const icon1322 = L.icon({ iconUrl: 'icon/1322.png', iconSize: [32, 32] });
+    const icon1360 = L.icon({ iconUrl: 'icon/1360.png', iconSize: [32, 32] });
+    const icon1388 = L.icon({ iconUrl: 'icon/1388.png', iconSize: [32, 32] });
+    const icon1411 = L.icon({ iconUrl: 'icon/1411.png', iconSize: [32, 32] });
+    const icon1471 = L.icon({ iconUrl: 'icon/1471.png', iconSize: [32, 32] });
+    const icon1516 = L.icon({ iconUrl: 'icon/1516&1527.png', iconSize: [32, 32] });
+    const icon1520 = L.icon({ iconUrl: 'icon/1520.png', iconSize: [32, 32] });
+    const icon1613 = L.icon({ iconUrl: 'icon/1613.png', iconSize: [32, 32] });
+    const icon1735 = L.icon({ iconUrl: 'icon/1735.png', iconSize: [32, 32] });
+    const icon1936 = L.icon({ iconUrl: 'icon/1936&1944.png', iconSize: [32, 32] });
+    const icon2008 = L.icon({ iconUrl: 'icon/2008.png', iconSize: [32, 32] });
+    const icon2236 = L.icon({ iconUrl: 'icon/2236.png', iconSize: [32, 32] });
+    const icon2329 = L.icon({ iconUrl: 'icon/2329&7128.png', iconSize: [32, 32] });
+    const icon2339 = L.icon({ iconUrl: 'icon/2331&2339.png', iconSize: [32, 32] });
+    const icon2383 = L.icon({ iconUrl: 'icon/2383.png', iconSize: [32, 32] });
+    const icon2465 = L.icon({ iconUrl: 'icon/2465.png', iconSize: [32, 32] });
+
+    // ラベルによるアイコンの分岐
+    const label290 = ['2007','8015','8016','8037','8038','8057','8058','8059','8077','8078','8079','8101','8102','0873','0874','8127','8137','8138','8139','8140','8141','8143','8144','8145','8146','2006','0741','0743','0744','0774','0775','0803','8060','8061','7165','8080','80801','8098','8099','8100','8128','8129','8156','8157','8158'];
+    const label557 = ['0557','2411','2412'];
+    const label600 = ['600'];
+    const label875 = ['0875','8125'];
+    const label1183 = ['1183'];
+    const label1240 = ['1240'];
+    const label1311 = ['1304','1311','1241'];
+    const label1322 = ['1322'];
+    const label1360 = ['1360'];
+    const label1388 = ['1388'];
+    const label1411 = ['1411'];
+    const label1471 = ['1471'];
+    const label1516 = ['1516','1527'];
+    const label1520 = ['1520'];
+    const label1613 = ['1613'];
+    const label1735 = ['1735'];
+    const label1936 = ['1936','1944'];
+    const label2008 = ['2008'];
+    const label2236 = ['2236'];
+    const label2329 = ['2329','7128'];
+    const label2339 = ['2339'];
+    const label2383 = ['2383'];
+    const label2465 = ['2465'];
+    
+    
+
+    function getIconByLabel(label) {
+      if (redLabels.includes(label)) {
+        return iconRed;
+      } else if (blueLabels.includes(label)) {
+        return iconBlue;
+      } else if (greenLabels.includes(label)) {
+        return iconGreen;
+      } else {
+        return iconOrange; // デフォルト
+      }
+    }
+
     // routes.txt を読み込んで route_id => route_long_name を取得
     async function loadRoutes() {
       const res = await fetch('https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/routes.txt');
@@ -82,7 +146,10 @@
                 mapInitialized = true;
               }
 
-              const marker = L.marker([position.latitude, position.longitude]).addTo(map);
+              // ラベルに基づいてアイコンを取得
+              const icon = getIconByLabel(vehicleLabel);
+
+              const marker = L.marker([position.latitude, position.longitude], { icon }).addTo(map);
               marker.bindPopup(`<b>${vehicleLabel}</b><br>${routeName}<br>${headsign}`);
               markers.push(marker);
             }
