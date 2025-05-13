@@ -1,76 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GTFS-RT Bus Location</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
     #map {
       width: 100%;
-      height: 500px;
+      height: 100%;
     }
   </style>
 </head>
 <body>
-  <h1>GTFS-RT Bus Location</h1>
   <div id="map"></div>
+
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script>
-    // Leafletマップの設定
-    const map = L.map('map');  // 初期位置の設定を削除
+    const map = L.map('map'); // 初期位置なし
 
-    // OSMのタイルレイヤーを追加
+    // OSMタイル追加
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    // バスのマーカーを格納するための配列
     let markers = [];
-let mapInitialized = false; // 初回表示済みフラグ
+    let mapInitialized = false;
 
-async function fetchAndUpdate() {
-  try {
-    const response = await fetch('https://morning-sun-eb88.fujimaru703.workers.dev/');
-    const data = await response.json();
+    async function fetchAndUpdate() {
+      try {
+        const response = await fetch('https://morning-sun-eb88.fujimaru703.workers.dev/');
+        const data = await response.json();
 
-    console.log('取得したGTFS-RTデータ:', data);
+        console.log('取得したGTFS-RTデータ:', data);
 
-    // 古いマーカーを削除
-    markers.forEach(marker => map.removeLayer(marker));
-    markers = [];
+        markers.forEach(marker => map.removeLayer(marker));
+        markers = [];
 
-    if (data.entity && Array.isArray(data.entity)) {
-      data.entity.forEach((entity, index) => {
-        if (entity.vehicle && entity.vehicle.position) {
-          const position = entity.vehicle.position;
-          const vehicleLabel = entity.vehicle.vehicle.label;
+        if (data.entity && Array.isArray(data.entity)) {
+          data.entity.forEach((entity, index) => {
+            if (entity.vehicle && entity.vehicle.position) {
+              const position = entity.vehicle.position;
+              const vehicleLabel = entity.vehicle.vehicle.label;
 
-          // 初回のみ中心を設定
-          if (!mapInitialized && index === 0) {
-            map.setView([position.latitude, position.longitude], 13);
-            mapInitialized = true;
-          }
+              // 初回のみマップの中心を設定
+              if (!mapInitialized && index === 0) {
+                map.setView([position.latitude, position.longitude], 13);
+                mapInitialized = true;
+              }
 
-          const marker = L.marker([position.latitude, position.longitude]).addTo(map);
-          marker.bindPopup(`<b>${vehicleLabel}</b>`);
-          markers.push(marker);
+              const marker = L.marker([position.latitude, position.longitude]).addTo(map);
+              marker.bindPopup(`<b>${vehicleLabel}</b>`);
+              markers.push(marker);
+            }
+          });
+        } else {
+          console.error('データ形式が不正です:', data);
         }
-      });
-    } else {
-      console.error('予期しないデータ形式:', data);
+      } catch (error) {
+        console.error('GTFS-RT取得エラー:', error);
+      }
     }
-  } catch (error) {
-    console.error('GTFS-RT取得エラー:', error);
-  }
-}
 
-
-    // 定期的にGTFS-RTデータを取得して地図を更新
-    setInterval(fetchAndUpdate, 15000);  // 10秒ごとに更新
-
-    // 初回データ取得
     fetchAndUpdate();
+    setInterval(fetchAndUpdate, 15000); // 15秒ごとに更新
   </script>
 </body>
 </html>
