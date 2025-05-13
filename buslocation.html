@@ -1,53 +1,59 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>GTFS-RT ライブアニメーションバスマップ</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <meta charset="utf-8" />
+  <title>GTFS-RT Map with MapLibre</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
   <style>
-    body, html { margin: 0; padding: 0; height: 100%; }
-    #map { width: 100%; height: 100%; }
+    body { margin: 0; padding: 0; }
+    #map { width: 100vw; height: 100vh; }
   </style>
 </head>
 <body>
   <div id="map"></div>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
+  <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
   <script>
-    const map = L.map('map').setView([37.75, 140.467], 13); // 福島市付近
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: 'https://demotiles.maplibre.org/style.json', // OSMベースのスタイル
+      center: [140.467, 37.75], // 福島付近
+      zoom: 13
+    });
 
-    const proxyUrl = 'https://morning-sun-eb88.fujimaru703.workers.dev/'; // ← あなたのCloudflare WorkerのURLに変更
+    async function fetchBusData() {
+      const proxyUrl = 'https://yourworker.youraccount.workers.dev'; // ← ここを自分のWorkerのURLに
+      const proxyUrl = 'https://morning-sun-eb88.fujimaru703.workers.dev/'; // ← ここを自分のWorkerのURLに
 
-    const busMarkers = {}; // 各バスのマーカー情報
+      const response = await fetch(proxyUrl);
+      const arrayBuffer = await response.arrayBuffer();
 
-    function animateMove(marker, toLatLng, duration = 1000) {
-      const fromLatLng = marker.getLatLng();
-      const startTime = performance.now();
+      // GTFS-RTのprotobufをブラウザで解析するには protobuf.js などが必要
+      // 今回は仮にサーバー側でJSONに変換済みとし、形式を以下のように想定:
+      // [{ id: '1234', latitude: 37.76, longitude: 140.45, label: 'Bus 1' }, ...]
 
-      function step(timestamp) {
-        const progress = Math.min((timestamp - startTime) / duration, 1);
-        const lat = fromLatLng.lat + (toLatLng.lat - fromLatLng.lat) * progress;
-        const lng = fromLatLng.lng + (toLatLng.lng - fromLatLng.lng) * progress;
-        marker.setLatLng([lat, lng]);
+      // ↓ここでは JSON 形式で受け取る場合の例（Workerで変換してる場合）
+      // const data = await response.json();
 
-        if (progress < 1) {
-          requestAnimationFrame(step);
-        }
+      // ↓ここではGTFS-RTをバイナリのまま受け取る場合（protobuf.jsで解析）
+      console.warn("ブラウザでバイナリのGTFS-RTを解析するにはprotobuf.jsなどが必要です");
+
+      // 仮に座標配列を直接定義（実際はデコード後に以下の形式を生成）
+      const mockData = [
+        { id: "bus1", latitude: 37.76, longitude: 140.45, label: "Bus 1" },
+        { id: "bus2", latitude: 37.75, longitude: 140.46, label: "Bus 2" }
+      ];
+
+      for (const vehicle of mockData) {
+        new maplibregl.Marker({ color: "#FF0000" })
+          .setLngLat([vehicle.longitude, vehicle.latitude])
+          .setPopup(new maplibregl.Popup().setText(vehicle.label))
+          .addTo(map);
       }
-
-      requestAnimationFrame(step);
     }
 
-    async function fetchBusPositions() {
-      try {
-        const res = await fetch(proxyUrl);
-        const vehicles = await res.json();
-
-        vehicles.forEach(vehicle => {
-          const { id, latitude, longitude, label } = vehicle;
+    map.on('load', fetchBusData);
+  </script>
+</body>
+</html>
