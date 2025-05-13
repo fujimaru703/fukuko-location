@@ -9,6 +9,23 @@
   <style>
     html, body { height: 100%; margin: 0; padding: 0; }
     #map { height: 100%; width: 100%; }
+
+    .menu-control {
+    background: white;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .menu-content {
+    display: none;
+    margin-top: 5px;
+  }
+
+  .menu-control.open .menu-content {
+    display: block;
+  }
+    
   </style>
 </head>
 <body>
