@@ -16,12 +16,6 @@
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script>
-    
-   
-
-// 地図に追加
-map.addControl(new MenuControl({ position: 'topright' }));
-
     const map = L.map('map');
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
@@ -344,17 +338,6 @@ function getIconByLabel(label) {
       fetchAndUpdate();
       setInterval(fetchAndUpdate, 15000);
     });
-
-    
-    // マップのクリックイベントをブロック
-    L.DomEvent.disableClickPropagation(container);
-    return container;
-  },
-
-  onRemove: function (map) {
-    // 何もしない
-  }
-});
   </script>
 </body>
 </html>
