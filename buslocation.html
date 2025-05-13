@@ -3,7 +3,56 @@
 <head>
   <meta charset="utf-8" />
   <title>GTFS-RT Map with MapLibre</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-wid<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>GTFS-RT バス位置表示（Leaflet版）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <style>
+    body, html { margin: 0; padding: 0; height: 100%; }
+    #map { width: 100%; height: 100%; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    const map = L.map('map').setView([37.75, 140.467], 13); // 福島市付近
+
+    // OpenStreetMap タイルを読み込み
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // 中継プロキシのURL（Cloudflare Worker経由）
+    const proxyUrl = 'https://yourworker.example.workers.dev'; // ← あなたのWorker URLに差し替えてください
+
+    // マーカー保存用
+    const busMarkers = {};
+
+    async function fetchBusPositions() {
+      try {
+        const res = await fetch(proxyUrl);
+        const vehicles = await res.json(); // JSON構造で返すようWorkerを設定している前提
+
+        vehicles.forEach(vehicle => {
+          const { id, latitude, longitude, label } = vehicle;
+
+          if (busMarkers[id]) {
+            // 既に存在するマーカーを更新
+            busMarkers[id].setLatLng([latitude, longitude]);
+          } else {
+            // 新しいマーカーを作成
+            const marker = L
+th, initial-scale=1" />
   <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
   <style>
     body { margin: 0; padding: 0; }
