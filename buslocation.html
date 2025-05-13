@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GTFS-RT Bus Location</title>
+  <title>GTFS-RT Bus Map</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <style>
     html, body {
@@ -11,10 +11,9 @@
       margin: 0;
       padding: 0;
     }
-
     #map {
-      width: 100%;
       height: 100%;
+      width: 100%;
     }
   </style>
 </head>
@@ -23,11 +22,10 @@
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script>
-    const map = L.map('map'); // 初期位置なし
+    const map = L.map('map');
 
-    // OSMタイル追加
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
     let markers = [];
@@ -49,7 +47,6 @@
               const position = entity.vehicle.position;
               const vehicleLabel = entity.vehicle.vehicle.label;
 
-              // 初回のみマップの中心を設定
               if (!mapInitialized && index === 0) {
                 map.setView([position.latitude, position.longitude], 13);
                 mapInitialized = true;
@@ -61,7 +58,7 @@
             }
           });
         } else {
-          console.error('データ形式が不正です:', data);
+          console.error('不正なデータ形式:', data);
         }
       } catch (error) {
         console.error('GTFS-RT取得エラー:', error);
