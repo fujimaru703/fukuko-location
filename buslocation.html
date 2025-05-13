@@ -42,25 +42,28 @@
         markers = [];
 
         if (data.entity && Array.isArray(data.entity)) {
-          data.entity.forEach((entity, index) => {
-            if (entity.vehicle && entity.vehicle.position) {
-              const tripId = entity.vehicle.trip.tripId;
-              const vehicleLabel = entity.vehicle.vehicle.label;
-
-              if (!mapInitialized && index === 0) {
-                map.setView([position.latitude, position.longitude], 13);
-                mapInitialized = true;
-              }
-
-              const marker = L.marker([position.latitude, position.longitude]).addTo(map);
-              marker.bindPopup(`<b>${vehicleLabel}</b>`);
-              markers.push(marker);
-            }
+          
           });
         } else {
           console.error('不正なデータ形式:', data);
         }
-      } catch (error) {
+      } catch (error) {data.entity.forEach((entity, index) => {
+  if (entity.vehicle && entity.vehicle.position) {
+    const position = entity.vehicle.position; // ← ここを追加
+    const tripId = entity.vehicle.trip.tripId;
+    const vehicleLabel = entity.vehicle.vehicle.label;
+
+    if (!mapInitialized && index === 0) {
+      map.setView([position.latitude, position.longitude], 13);
+      mapInitialized = true;
+    }
+
+    const marker = L.marker([position.latitude, position.longitude]).addTo(map);
+    marker.bindPopup(`<b>${vehicleLabel}</b>`);
+    markers.push(marker);
+  }
+});
+
         console.error('GTFS-RT取得エラー:', error);
       }
     }
