@@ -1,69 +1,69 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <title>GTFS-RT バスマップ</title>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <title>GTFS-RT バス位置情報</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
-    #map { height: 100vh; width: 100%; }
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
   <div id="map"></div>
 
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
-    // Cloudflare Worker経由のCORS回避プロキシURL
-    const API_URL = 'https://morning-sun-eb88.fujimaru703.workers.dev/'; // ← 自分のCloudflare Worker URLに置き換えてください
+    // 地図の初期設定
+    const map = L.map('map').setView([35.6895, 139.6917], 13);  // 初期位置を東京に設定
 
-    // マップの初期設定（位置は福島に仮設定）
-    const map = L.map('map').setView([37.75, 140.47], 13);
-
-    // OpenStreetMap タイルを表示
+    // OpenStreetMapタイルを設定
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    // マーカーを記録するオブジェクト
+    // バスマーカーの管理
     const markers = {};
 
-    // バス位置を取得・更新
+    // Cloudflare Worker のURL
+    const API_URL = 'https://your-cloudflare-worker-url.example.workers.dev';  // WorkerのURLを設定
+
+    // バス位置情報を取得して地図上に反映
     async function fetchAndUpdate() {
       try {
         const res = await fetch(API_URL);
-        const data = await res.json();
+        const data = await res.json();  // Worker経由でJSONデータを取得
 
-        // 一度すべて非表示
-        for (const id in markers) {
-          markers[id].setOpacity(0.3);
-        }
+        // 各バスの位置を地図に反映
+        data.forEach(bus => {
+          const { id, latitude, longitude, label } = bus;
 
-        // 表示データを更新
-        (data.vehicles || []).forEach(bus => {
-  const { id, latitude, longitude, label } = bus;
+          if (markers[id]) {
+            // 既存のマーカーがあれば位置を更新
+            markers[id].setLatLng([latitude, longitude]).setOpacity(1);
+          } else {
+            // 新しいマーカーを作成
+            const marker = L.marker([latitude, longitude])
+              .bindPopup(`バス: ${label || id}`)
+              .addTo(map);
+            markers[id] = marker;
+          }
+        });
 
-  if (markers[id]) {
-    markers[id].setLatLng([latitude, longitude]).setOpacity(1);
-  } else {
-    const marker = L.marker([latitude, longitude])
-      .bindPopup(`Bus: ${label || id}`)
-      .addTo(map);
-    markers[id] = marker;
-  }
-});
-
-      } catch (e) {
-        console.error("GTFS-RT取得エラー:", e);
+      } catch (error) {
+        console.error("GTFS-RT取得エラー:", error);
       }
     }
 
-    // 初回呼び出しと定期更新（例：5秒間隔）
-    fetchAndUpdate();
+    // 5秒毎に位置情報を更新
     setInterval(fetchAndUpdate, 5000);
+
+    // 初回のデータ取得
+    fetchAndUpdate();
+
   </script>
 </body>
 </html>
