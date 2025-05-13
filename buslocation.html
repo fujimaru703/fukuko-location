@@ -34,6 +34,8 @@
         const response = await fetch('https://morning-sun-eb88.fujimaru703.workers.dev/'); // Cloudflare WorkerのURLを指定
         const data = await response.json();
 
+        console.log(data);
+
         // マーカーを削除（新しいデータで更新するため）
         markers.forEach(marker => {
           map.removeLayer(marker);
