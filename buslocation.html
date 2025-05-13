@@ -1,58 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <title>GTFS-RT Map with MapLibre</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+  <meta charset="UTF-8" />
+  <title>GTFS-RT バスマップ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
-    body { margin: 0; padding: 0; }
-    #map { width: 100vw; height: 100vh; }
+    #map { height: 100vh; width: 100%; }
   </style>
 </head>
 <body>
   <div id="map"></div>
 
-  <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <script>
-    const map = new maplibregl.Map({
-      container: 'map',
-      style: 'https://demotiles.maplibre.org/style.json', // OSMベースのスタイル
-      center: [140.467, 37.75], // 福島付近
-      zoom: 13
-    });
+    // Cloudflare Worker経由のCORS回避プロキシURL
+    const API_URL = 'https://morning-sun-eb88.fujimaru703.workers.dev/'; // ← 自分のCloudflare Worker URLに置き換えてください
 
-    async function fetchBusData() {
-      const proxyUrl = 'https://morning-sun-eb88.fujimaru703.workers.dev/'; // ← ここを自分のWorkerのURLに
+    // マップの初期設定（位置は福島に仮設定）
+    const map = L.map('map').setView([37.75, 140.47], 13);
 
-      const response = await fetch(proxyUrl);
-      const arrayBuffer = await response.arrayBuffer();
+    // OpenStreetMap タイルを表示
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
 
-      // GTFS-RTのprotobufをブラウザで解析するには protobuf.js などが必要
-      // 今回は仮にサーバー側でJSONに変換済みとし、形式を以下のように想定:
-      // [{ id: '1234', latitude: 37.76, longitude: 140.45, label: 'Bus 1' }, ...]
+    // マーカーを記録するオブジェクト
+    const markers = {};
 
-      // ↓ここでは JSON 形式で受け取る場合の例（Workerで変換してる場合）
-      // const data = await response.json();
+    // バス位置を取得・更新
+    async function fetchAndUpdate() {
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
 
-      // ↓ここではGTFS-RTをバイナリのまま受け取る場合（protobuf.jsで解析）
-      console.warn("ブラウザでバイナリのGTFS-RTを解析するにはprotobuf.jsなどが必要です");
+        // 一度すべて非表示
+        for (const id in markers) {
+          markers[id].setOpacity(0.3);
+        }
 
-      // 仮に座標配列を直接定義（実際はデコード後に以下の形式を生成）
-      const mockData = [
-        { id: "bus1", latitude: 37.76, longitude: 140.45, label: "Bus 1" },
-        { id: "bus2", latitude: 37.75, longitude: 140.46, label: "Bus 2" }
-      ];
+        // 表示データを更新
+        data.forEach(bus => {
+          const { id, latitude, longitude, label } = bus;
 
-      for (const vehicle of mockData) {
-        new maplibregl.Marker({ color: "#FF0000" })
-          .setLngLat([vehicle.longitude, vehicle.latitude])
-          .setPopup(new maplibregl.Popup().setText(vehicle.label))
-          .addTo(map);
+          if (markers[id]) {
+            markers[id].setLatLng([latitude, longitude]).setOpacity(1);
+          } else {
+            const marker = L.marker([latitude, longitude])
+              .bindPopup(`Bus: ${label || id}`)
+              .addTo(map);
+            markers[id] = marker;
+          }
+        });
+
+      } catch (e) {
+        console.error("GTFS-RT取得エラー:", e);
       }
     }
 
-    map.on('load', fetchBusData);
+    // 初回呼び出しと定期更新（例：5秒間隔）
+    fetchAndUpdate();
+    setInterval(fetchAndUpdate, 5000);
   </script>
 </body>
 </html>
