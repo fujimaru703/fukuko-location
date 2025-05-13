@@ -54,7 +54,7 @@
               }
 
               const marker = L.marker([position.latitude, position.longitude]).addTo(map);
-              marker.bindPopup(`<b>${vehicleLabel}</b><br><b>${routeId}<b>`);
+              marker.bindPopup(`<b>${vehicleLabel}</b><br><b>${tripId}<b>`);
               markers.push(marker);
             }
           });
