@@ -37,6 +37,8 @@
         const res = await fetch(API_URL);
         const data = await res.json();  // Worker経由でJSONデータを取得
 
+        console.log("取得したデータ:", data);
+
         // 各バスの位置を地図に反映
         data.forEach(bus => {
           const { id, latitude, longitude, label } = bus;
@@ -64,7 +66,6 @@
     // 初回のデータ取得
     fetchAndUpdate();
 
-    console.log("取得したデータ:", data);
 
   </script>
 </body>
