@@ -27,48 +27,44 @@
 
     // バスのマーカーを格納するための配列
     let markers = [];
+let mapInitialized = false; // 初回表示済みフラグ
 
-    // GTFS-RTデータを取得し、マップ上にバスの位置を表示
-    async function fetchAndUpdate() {
-      try {
-        const response = await fetch('https://morning-sun-eb88.fujimaru703.workers.dev/'); // Cloudflare WorkerのURLを指定
-        const data = await response.json();
+async function fetchAndUpdate() {
+  try {
+    const response = await fetch('https://morning-sun-eb88.fujimaru703.workers.dev/');
+    const data = await response.json();
 
-        console.log('取得したGTFS-RTデータ:', data);
+    console.log('取得したGTFS-RTデータ:', data);
 
-        // マーカーを削除（新しいデータで更新するため）
-        markers.forEach(marker => {
-          map.removeLayer(marker);
-        });
-        markers = [];  // マーカー配列をリセット
+    // 古いマーカーを削除
+    markers.forEach(marker => map.removeLayer(marker));
+    markers = [];
 
-        // GTFS-RTのデータが含まれている場合
-        if (data.entity && Array.isArray(data.entity)) {
-          data.entity.forEach(entity => {
-            if (entity.vehicle && entity.vehicle.position) {
-              const position = entity.vehicle.position;
-              const vehicleLabel = entity.vehicle.vehicle.label;
+    if (data.entity && Array.isArray(data.entity)) {
+      data.entity.forEach((entity, index) => {
+        if (entity.vehicle && entity.vehicle.position) {
+          const position = entity.vehicle.position;
+          const vehicleLabel = entity.vehicle.vehicle.label;
 
-              if (markers.length === 1) {
-                map.setView([position.latitude, position.longitude], 13);
-              }
+          // 初回のみ中心を設定
+          if (!mapInitialized && index === 0) {
+            map.setView([position.latitude, position.longitude], 13);
+            mapInitialized = true;
+          }
 
-              // バスの位置をLeafletマップにマーカーとして追加
-              const marker = L.marker([position.latitude, position.longitude]).addTo(map);
-              marker.bindPopup(`<b>${vehicleLabel}</b><br>緯度: ${position.latitude}<br>経度: ${position.longitude}`);
-
-              // マーカーを配列に格納
-              markers.push(marker);
-
-            }
-          });
-        } else {
-          console.error('予期しないデータ形式:', data);
+          const marker = L.marker([position.latitude, position.longitude]).addTo(map);
+          marker.bindPopup(`<b>${vehicleLabel}</b>`);
+          markers.push(marker);
         }
-      } catch (error) {
-        console.error('GTFS-RT取得エラー:', error);
-      }
+      });
+    } else {
+      console.error('予期しないデータ形式:', data);
     }
+  } catch (error) {
+    console.error('GTFS-RT取得エラー:', error);
+  }
+}
+
 
     // 定期的にGTFS-RTデータを取得して地図を更新
     setInterval(fetchAndUpdate, 15000);  // 10秒ごとに更新
