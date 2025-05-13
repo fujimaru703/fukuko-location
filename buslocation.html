@@ -16,6 +16,45 @@
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script>
+    
+    // カスタムコントロールを作成
+const MenuControl = L.Control.extend({
+  onAdd: function (map) {
+    const container = L.DomUtil.create('div', 'menu-control leaflet-bar');
+
+    // タイトル
+    const button = L.DomUtil.create('div', '', container);
+    button.innerHTML = 'メニュー ▼';
+    button.style.padding = '5px';
+    button.style.fontSize = '14px';
+    button.style.cursor = 'pointer';
+
+    // 中身
+    const content = L.DomUtil.create('div', 'menu-content', container);
+    content.innerHTML = `
+      <button onclick="alert('バスリスト表示！')">バス一覧</button><br>
+      <button onclick="alert('凡例表示！')">凡例</button><br>
+      <button onclick="alert('設定！')">設定</button>
+    `;
+
+    // クリックで展開・縮小
+    button.addEventListener('click', () => {
+      container.classList.toggle('open');
+    });
+
+    // マップのクリックイベントをブロック
+    L.DomEvent.disableClickPropagation(container);
+    return container;
+  },
+
+  onRemove: function (map) {
+    // 何もしない
+  }
+});
+
+// 地図に追加
+map.addControl(new MenuControl({ position: 'topright' }));
+
     const map = L.map('map');
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
