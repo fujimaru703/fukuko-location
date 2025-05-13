@@ -1,18 +1,11 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <title>GTFS-RT Map with MapLibre</title>
-  <meta name="viewport" content="width=device-wid<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>GTFS-RT バス位置表示（Leaflet版）</title>
+  <title>GTFS-RT ライブアニメーションバスマップ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
   <style>
     body, html { margin: 0; padding: 0; height: 100%; }
     #map { width: 100%; height: 100%; }
@@ -21,87 +14,40 @@
 <body>
   <div id="map"></div>
 
-  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
     const map = L.map('map').setView([37.75, 140.467], 13); // 福島市付近
-
-    // OpenStreetMap タイルを読み込み
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // 中継プロキシのURL（Cloudflare Worker経由）
-    const proxyUrl = 'https://yourworker.example.workers.dev'; // ← あなたのWorker URLに差し替えてください
+    const proxyUrl = 'https://yourworker.example.workers.dev'; // ← あなたのCloudflare WorkerのURLに変更
 
-    // マーカー保存用
-    const busMarkers = {};
+    const busMarkers = {}; // 各バスのマーカー情報
+
+    function animateMove(marker, toLatLng, duration = 1000) {
+      const fromLatLng = marker.getLatLng();
+      const startTime = performance.now();
+
+      function step(timestamp) {
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+        const lat = fromLatLng.lat + (toLatLng.lat - fromLatLng.lat) * progress;
+        const lng = fromLatLng.lng + (toLatLng.lng - fromLatLng.lng) * progress;
+        marker.setLatLng([lat, lng]);
+
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        }
+      }
+
+      requestAnimationFrame(step);
+    }
 
     async function fetchBusPositions() {
       try {
         const res = await fetch(proxyUrl);
-        const vehicles = await res.json(); // JSON構造で返すようWorkerを設定している前提
+        const vehicles = await res.json();
 
         vehicles.forEach(vehicle => {
           const { id, latitude, longitude, label } = vehicle;
-
-          if (busMarkers[id]) {
-            // 既に存在するマーカーを更新
-            busMarkers[id].setLatLng([latitude, longitude]);
-          } else {
-            // 新しいマーカーを作成
-            const marker = L
-th, initial-scale=1" />
-  <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
-  <style>
-    body { margin: 0; padding: 0; }
-    #map { width: 100vw; height: 100vh; }
-  </style>
-</head>
-<body>
-  <div id="map"></div>
-
-  <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
-  <script>
-    const map = new maplibregl.Map({
-      container: 'map',
-      style: 'https://demotiles.maplibre.org/style.json', // OSMベースのスタイル
-      center: [140.467, 37.75], // 福島付近
-      zoom: 13
-    });
-
-    async function fetchBusData() {
-      const proxyUrl = 'https://morning-sun-eb88.fujimaru703.workers.dev/'; // ← ここを自分のWorkerのURLに
-
-      const response = await fetch(proxyUrl);
-      const arrayBuffer = await response.arrayBuffer();
-
-      // GTFS-RTのprotobufをブラウザで解析するには protobuf.js などが必要
-      // 今回は仮にサーバー側でJSONに変換済みとし、形式を以下のように想定:
-      // [{ id: '1234', latitude: 37.76, longitude: 140.45, label: 'Bus 1' }, ...]
-
-      // ↓ここでは JSON 形式で受け取る場合の例（Workerで変換してる場合）
-      // const data = await response.json();
-
-      // ↓ここではGTFS-RTをバイナリのまま受け取る場合（protobuf.jsで解析）
-      console.warn("ブラウザでバイナリのGTFS-RTを解析するにはprotobuf.jsなどが必要です");
-
-      // 仮に座標配列を直接定義（実際はデコード後に以下の形式を生成）
-      const mockData = [
-        { id: "bus1", latitude: 37.76, longitude: 140.45, label: "Bus 1" },
-        { id: "bus2", latitude: 37.75, longitude: 140.46, label: "Bus 2" }
-      ];
-
-      for (const vehicle of mockData) {
-        new maplibregl.Marker({ color: "#FF0000" })
-          .setLngLat([vehicle.longitude, vehicle.latitude])
-          .setPopup(new maplibregl.Popup().setText(vehicle.label))
-          .addTo(map);
-      }
-    }
-
-    map.on('load', fetchBusData);
-  </script>
-</body>
-</html>
