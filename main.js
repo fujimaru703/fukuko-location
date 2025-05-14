@@ -347,5 +347,5 @@ function getIconByLabel(label) {
     // 初期化
     Promise.all([loadRoutes(), loadTrips()]).then(() => {
       fetchAndUpdate();
-      setInterval(fetchAndUpdate, 5000);
+      setTimeout(fetchAndUpdate, 1000);
     });
