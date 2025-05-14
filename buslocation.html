@@ -1,5 +1,12 @@
 <!DOCTYPE html>
 <html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="icon-24x24.png">
+  <title>福島交通ロケーションマップ</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <style>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,6 +17,12 @@
     html, body { height: 100%; margin: 0; padding: 0; }
     #map { height: 100%; width: 100%; }
   </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script>
   </head>
   <body>
     <div id="map"></div>
@@ -281,7 +294,7 @@ labeltoeimklong.forEach(l => labelIconMap.set(l, icontoeimklong));
 label234.forEach(l => labelIconMap.set(l, icon234));
 
 // デフォルトアイコンを設定（必要に応じて変更）
-const iconDefault = L.icon({ iconUrl: 'icon/norukamo.png', iconSize: [32, 32] });
+const iconDefault = L.icon({ iconUrl: 'icon/AG.png', iconSize: [32, 32] });
 
 // アイコン取得関数
 function getIconByLabel(label) {
@@ -293,6 +306,7 @@ function getIconByLabel(label) {
     async function loadRoutes() {
       const res = await fetch('https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/routes.txt');
       const text = await res.text();
+      const lines = text.trim().split('\n');
       const lines = text.trim().split('n');
       const headers = lines[0].split(',');
       const routeIdIndex = headers.indexOf('route_id');
@@ -308,6 +322,7 @@ function getIconByLabel(label) {
     async function loadTrips() {
       const res = await fetch('https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/trips.txt');
       const text = await res.text();
+      const lines = text.trim().split('\n');
       const lines = text.trim().split('n');
       const headers = lines[0].split(',');
       const tripIdIndex = headers.indexOf('trip_id');
@@ -367,5 +382,6 @@ function getIconByLabel(label) {
       setInterval(fetchAndUpdate, 15000);
     });
   </script>
+</body>
   </body>
 </html>
