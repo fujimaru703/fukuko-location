@@ -345,7 +345,11 @@ function getIconByLabel(label) {
     }
 
     // 初期化
-    Promise.all([loadRoutes(), loadTrips()]).then(() => {
-      fetchAndUpdate();
-      setTimeout(fetchAndUpdate, 1000);
-    });
+    Promise.all([loadRoutes(), loadTrips()])
+  .then(() => {
+    fetchAndUpdate();
+    setTimeout(fetchAndUpdate, 1000);
+  })
+  .catch((error) => {
+    console.error("エラーが発生しました:", error);
+  });
