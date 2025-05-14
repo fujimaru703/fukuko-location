@@ -15,6 +15,362 @@
   <div id="map"></div>
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-  <script src="./main.js"></script>
+  <script>
+    const map = L.map('map');
+
+    // OpenStreetMap（標準）
+const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap contributors'
+});
+
+// 国土地理院（標準地図）
+const topo = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
+  attribution: '&copy; 国土地理院'
+});
+
+// 国土地理院（淡色地図）
+const gsi = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg', {
+  attribution: '&copy; 国土地理院'
+});
+
+    const dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://carto.com/">Carto</a> | &copy; OpenStreetMap contributors',
+});
+
+// 初期レイヤーを地図に追加
+osm.addTo(map);
+
+// レイヤー選択UIを追加
+const baseMaps = {
+  "OpenStreetMap": osm,
+  "標準地図（国土地理院）": topo,
+  "航空地図（国土地理院）": gsi,
+  "夜間地図（Dark Mode）": dark
+};
+
+L.control.layers(baseMaps).addTo(map);
+
+    let markers = [];
+    let mapInitialized = false;
+    let routeNames = {}; // route_id => route_long_name
+    let tripHeadsigns = {}; // trip_id => trip_headsign
+
+    // アイコンの定義
+    const icon290 = L.icon({ iconUrl: 'icon/290.png', iconSize: [32, 32] });
+    const icon557 = L.icon({ iconUrl: 'icon/557&2411.png', iconSize: [32, 32] });
+    const icon600 = L.icon({ iconUrl: 'icon/600.png', iconSize: [32, 32] });
+    const icon875 = L.icon({ iconUrl: 'icon/875.png', iconSize: [32, 32] });
+    const icon1183 = L.icon({ iconUrl: 'icon/1183.png', iconSize: [32, 32] });
+    const icon1240 = L.icon({ iconUrl: 'icon/1240.png', iconSize: [32, 32] });
+    const icon1311 = L.icon({ iconUrl: 'icon/1311.png', iconSize: [32, 32] });
+    const icon1322 = L.icon({ iconUrl: 'icon/1322.png', iconSize: [32, 32] });
+    const icon1360 = L.icon({ iconUrl: 'icon/1360.png', iconSize: [32, 32] });
+    const icon1388 = L.icon({ iconUrl: 'icon/1388.png', iconSize: [32, 32] });
+    const icon1411 = L.icon({ iconUrl: 'icon/1411.png', iconSize: [32, 32] });
+    const icon1471 = L.icon({ iconUrl: 'icon/1471.png', iconSize: [32, 32] });
+    const icon1516 = L.icon({ iconUrl: 'icon/1516&1527.png', iconSize: [32, 32] });
+    const icon1520 = L.icon({ iconUrl: 'icon/1520.png', iconSize: [32, 32] });
+    const icon1613 = L.icon({ iconUrl: 'icon/1613.png', iconSize: [32, 32] });
+    const icon1735 = L.icon({ iconUrl: 'icon/1735.png', iconSize: [32, 32] });
+    const icon1936 = L.icon({ iconUrl: 'icon/1936&1944.png', iconSize: [32, 32] });
+    const icon2008 = L.icon({ iconUrl: 'icon/2008.png', iconSize: [32, 32] });
+    const icon2236 = L.icon({ iconUrl: 'icon/2236.png', iconSize: [32, 32] });
+    const icon2329 = L.icon({ iconUrl: 'icon/2329&7128.png', iconSize: [32, 32] });
+    const icon2339 = L.icon({ iconUrl: 'icon/2331&2339.png', iconSize: [32, 32] });
+    const icon2383 = L.icon({ iconUrl: 'icon/2383.png', iconSize: [32, 32] });
+    const icon2465 = L.icon({ iconUrl: 'icon/2465.png', iconSize: [32, 32] });
+    const icon2467 = L.icon({ iconUrl: 'icon/2467.png', iconSize: [32, 32] });
+    const icon2468 = L.icon({ iconUrl: 'icon/2468&2469.png', iconSize: [32, 32] });
+    const icon2489 = L.icon({ iconUrl: 'icon/2489.png', iconSize: [32, 32] });
+    const icon2594 = L.icon({ iconUrl: 'icon/2594.png', iconSize: [32, 32] });
+    const icon2940 = L.icon({ iconUrl: 'icon/2940.png', iconSize: [32, 32] });
+    const icon2941 = L.icon({ iconUrl: 'icon/2941.png', iconSize: [32, 32] });
+    const icon7077 = L.icon({ iconUrl: 'icon/7077.png', iconSize: [32, 32] });
+    const icon7085 = L.icon({ iconUrl: 'icon/7085.png', iconSize: [32, 32] });
+    const icon7110 = L.icon({ iconUrl: 'icon/7110.png', iconSize: [32, 32] });
+    const icon7701 = L.icon({ iconUrl: 'icon/7701.png', iconSize: [32, 32] });
+    const icon8008 = L.icon({ iconUrl: 'icon/8008.png', iconSize: [32, 32] });
+    const icon8014 = L.icon({ iconUrl: 'icon/8014.png', iconSize: [32, 32] });
+    const icon8075 = L.icon({ iconUrl: 'icon/8075.png', iconSize: [32, 32] });
+    const icon8109 = L.icon({ iconUrl: 'icon/8109.png', iconSize: [32, 32] });
+    const icon8122 = L.icon({ iconUrl: 'icon/8122&8124.png', iconSize: [32, 32] });
+    const icon8155 = L.icon({ iconUrl: 'icon/8155.png', iconSize: [32, 32] });
+    const iconkanachan = L.icon({ iconUrl: 'icon/kanachan.png', iconSize: [32, 32] });
+    const iconkanachumio = L.icon({ iconUrl: 'icon/kanachu-mio.png', iconSize: [32, 32] });
+    const iconkanachumk = L.icon({ iconUrl: 'icon/kanachu-mk.png', iconSize: [32, 32] });
+    const iconkanachump35 = L.icon({ iconUrl: 'icon/kanachu-mp35.png', iconSize: [32, 32] });
+    const iconkanachump37 = L.icon({ iconUrl: 'icon/kanachu-mp37.png', iconSize: [32, 32] });
+    const iconkanehachi = L.icon({ iconUrl: 'icon/kanehachi.png', iconSize: [32, 32] });
+    const iconkantomidi = L.icon({ iconUrl: 'icon/kanto-midi.png', iconSize: [32, 32] });
+    const iconkeiohr = L.icon({ iconUrl: 'icon/keio-hr.png', iconSize: [32, 32] });
+    const iconkeiomklong = L.icon({ iconUrl: 'icon/keio-mk-long.png', iconSize: [32, 32] });
+    const iconklhr = L.icon({ iconUrl: 'icon/kl-hr.png', iconSize: [32, 32] });
+    const iconkllt = L.icon({ iconUrl: 'icon/kl-lt.png', iconSize: [32, 32] });
+    const iconkwskhr = L.icon({ iconUrl: 'icon/kwsk-hr.png', iconSize: [32, 32] });
+    const iconliesse = L.icon({ iconUrl: 'icon/liesse.png', iconSize: [32, 32] });
+    const iconmk = L.icon({ iconUrl: 'icon/mk.png', iconSize: [32, 32] });
+    const iconmk517 = L.icon({ iconUrl: 'icon/mk517.png', iconSize: [32, 32] });
+    const iconmk619 = L.icon({ iconUrl: 'icon/mk619.png', iconSize: [32, 32] });
+    const iconmkf = L.icon({ iconUrl: 'icon/mk-f.png', iconSize: [32, 32] });
+    const iconmp35silver = L.icon({ iconUrl: 'icon/mp35-silver.png', iconSize: [32, 32] });
+    const iconmp37 = L.icon({ iconUrl: 'icon/mp37.png', iconSize: [32, 32] });
+    const iconmp37black = L.icon({ iconUrl: 'icon/mp37-black.png', iconSize: [32, 32] });
+    const iconmp37silver = L.icon({ iconUrl: 'icon/mp37-silver.png', iconSize: [32, 32] });
+    const iconmp317 = L.icon({ iconUrl: 'icon/mp317.png', iconSize: [32, 32] });
+    const iconnankairj = L.icon({ iconUrl: 'icon/nankai-rj.png', iconSize: [32, 32] });
+    const iconpdgkr = L.icon({ iconUrl: 'icon/pdg-kr.png', iconSize: [32, 32] });
+    const iconpdglr = L.icon({ iconUrl: 'icon/pdg-lr.png', iconSize: [32, 32] });
+    const iconpkhr = L.icon({ iconUrl: 'icon/pk-hr.png', iconSize: [32, 32] });
+    const iconrakuraku = L.icon({ iconUrl: 'icon/rakuraku.png', iconSize: [32, 32] });
+    const iconrakurakuf = L.icon({ iconUrl: 'icon/rakuraku-f.png', iconSize: [32, 32] });
+    const iconrinkomio = L.icon({ iconUrl: 'icon/rinko-mio.png', iconSize: [32, 32] });
+    const iconserega = L.icon({ iconUrl: 'icon/serega(15~).png', iconSize: [32, 32] });
+    const icontkgmk = L.icon({ iconUrl: 'icon/tkg-mk.png', iconSize: [32, 32] });
+    const icontoeimklong = L.icon({ iconUrl: 'icon/toei-mk-long.png', iconSize: [32, 32] });
+    const icon234 = L.icon({ iconUrl: 'icon/234.png', iconSize: [32, 32] });
+
+    // ラベルによるアイコンの分岐
+    const label290 = ['2007','8015','8016','8037','8038','8057','8058','8059','8077','8078','8079','8081','8101','8102','0873','0874','8127','8137','8138','8139','8140','8141','8143','8144','8145','8146','2006','0741','0743','0744','0774','0775','0803','8060','8061','7165','8080','80801','8098','8099','8100','8128','8129','8156','8157','8158','0887','0889'];
+    const label557 = ['0557','2411','2412'];
+    const label600 = ['0600'];
+    const label875 = ['0875','8125'];
+    const label1183 = ['1183'];
+    const label1240 = ['1240'];
+    const label1311 = ['1304','1311','1241'];
+    const label1322 = ['1322'];
+    const label1360 = ['1360'];
+    const label1388 = ['1388'];
+    const label1411 = ['1411'];
+    const label1471 = ['1471'];
+    const label1516 = ['0890','1527'];
+    const label1520 = ['1520'];
+    const label1613 = ['1613'];
+    const label1735 = ['1735'];
+    const label1936 = ['1936','1944'];
+    const label2008 = ['2008'];
+    const label2236 = ['2236'];
+    const label2329 = ['2328','2329','7128'];
+    const label2339 = ['2339'];
+    const label2383 = ['2383'];
+    const label2465 = ['2465'];
+    const label2467 = ['2467'];
+    const label2468 = ['2468','2469'];
+    const label2489 = ['2489'];
+    const label2594 = ['2594'];
+    const label2940 = ['2940'];
+    const label2941 = ['2941'];
+    const label7077 = ['7077'];
+    const label7085 = ['7085'];
+    const label7110 = ['7110'];
+    const label7701 = ['7701'];
+    const label8008 = ['8008'];
+    const label8014 = ['8014'];
+    const label8075 = ['8075'];
+    const label8109 = ['8109','8148','8160'];
+    const label8122 = ['8122','8124'];
+    const label8155 = ['8155'];
+    const labelkanachan = ['7097','7113','7115','7116'];
+    const labelkanachumio = ['8083','0865','8095'];
+    const labelkanachumk = ['1623','1625','1668','1706','1769','1771','0562','1860','1863','0580','0581'];
+    const labelkanachump35 = ['1920','7032','1924','7034','1945','7118','7157','8066','8068'];
+    const labelkanachump37 = ['7024','7028','1891','2001'];
+    const labelkanehachi = ['0550','0660'];
+    const labelkantomidi = ['0672','2009','2022','8022'];
+    const labelkeiohr = ['1544','1638','1641','1645','1646','1657','1698','1740','1764','7198'];
+    const labelkeiomklong = ['7047','7050','7052','7061','7064'];
+    const labelklhr = ['7030','7033','1943','7036','7045','1974','2027','0883'];
+    const labelkllt = ['1723','7072','1812','1822','1828','1843','8020','8032','8043'];
+    const labelkwskhr = ['7137','8123','8130'];
+    const labelliesse = ['1382','1590','1859','0854','8147'];
+    const labelmk = ['0044','0672','0864','2009','2022','8019','8022','8073','8076','7199','1541'];
+    const labelmk517 = ['2091','2103'];
+    const labelmk619 = ['2414','2416','2417','2418','2420'];
+    const labelmkf = ['0603','2548','2551','0501','0014'];
+    const labelmp35silver = ['7106','7109','7111','7112','7114','7117','7119'];
+    const labelmp37 = ['2039','2046','8006','7058','8007','8009','8010','8012','7078','7079','7084','7088','7089','7090','7091','7098','7099','7100','7129','7130','7136','7139','7143','7145','7151','7152','8096'];
+    const labelmp37black = ['7082','7083','7093','7094','7095','7096'];
+    const labelmp37silver = ['7080','7086','7087','7092'];
+    const labelmp317 = ['2536','2585','2586','2588','2592','2593'];
+    const labelnankairj = ['8063','8064'];
+    const labelpdgkr = ['1836','1837','0997','0998','1091','1092','1196','1197','1217','7132','7148','7150','7153','8112','8069','0885'];
+    const labelpdglr = ['0995','0996','8088','1089','1090','1192','1193','1194','1219','1220','1221','0997','0998','1091','1092','1196','1197','1217','1605','1835','7132','7148','7150','7153','8112','8069','8041'];
+    const labelpkhr = ['8024','8033','8044','8074'];
+    const labelrakuraku = ['0017','0018','0867','0021','0847','8163','8162','0116','0117','0119','0120','0121','0191','0193','0236','0237','0238','2045','0299','0302','0397','0408','0406','0407','0409','8134','8135'];
+    const labelrakurakuf = ['0017','0116'];
+    const labelrinkomio = ['1336','1369','1379','0433','0451','1710','1720','2020','1732','1850','1854','1857','2041','8150','8025'];
+    const labelserega = ['1537','1538'];
+    const labeltkgmk = ['1472','1473','0879','0510','0878','8045','1660','0878','7133','7134','1833','1834','1926','1927','1928','1929','1930','2004','2005'];
+    const labeltoeimklong = ['7046','1990','7047','1999'];
+    const label234 = ['0429','0430','0431','8039','7135','7144','8159','7163','8072','7164','7166','8086','7171','8089','8090','8085','7172','8097','7181','8103','7182','8107','7186','8113','7187','8126','8133','8167'];
+
+
+    // ラベルとアイコンの対応関係をオブジェクトとして定義
+const labelIconMap = new Map();
+
+// 各ラベル配列に対して、対応するアイコンを登録
+label290.forEach(l => labelIconMap.set(l, icon290));
+label557.forEach(l => labelIconMap.set(l, icon557));
+label600.forEach(l => labelIconMap.set(l, icon600));
+label875.forEach(l => labelIconMap.set(l, icon875));
+label1183.forEach(l => labelIconMap.set(l, icon1183));
+label1240.forEach(l => labelIconMap.set(l, icon1240));
+label1311.forEach(l => labelIconMap.set(l, icon1311));
+label1322.forEach(l => labelIconMap.set(l, icon1322));
+label1360.forEach(l => labelIconMap.set(l, icon1360));
+label1388.forEach(l => labelIconMap.set(l, icon1388));
+label1411.forEach(l => labelIconMap.set(l, icon1411));
+label1471.forEach(l => labelIconMap.set(l, icon1471));
+label1516.forEach(l => labelIconMap.set(l, icon1516));
+label1520.forEach(l => labelIconMap.set(l, icon1520));
+label1613.forEach(l => labelIconMap.set(l, icon1613));
+label1735.forEach(l => labelIconMap.set(l, icon1735));
+label1936.forEach(l => labelIconMap.set(l, icon1936));
+label2008.forEach(l => labelIconMap.set(l, icon2008));
+label2236.forEach(l => labelIconMap.set(l, icon2236));
+label2329.forEach(l => labelIconMap.set(l, icon2329));
+label2339.forEach(l => labelIconMap.set(l, icon2339));
+label2383.forEach(l => labelIconMap.set(l, icon2383));
+label2465.forEach(l => labelIconMap.set(l, icon2465));
+label2467.forEach(l => labelIconMap.set(l, icon2467));
+label2468.forEach(l => labelIconMap.set(l, icon2468));
+label2489.forEach(l => labelIconMap.set(l, icon2489));
+label2594.forEach(l => labelIconMap.set(l, icon2594));
+label2940.forEach(l => labelIconMap.set(l, icon2940));
+label2941.forEach(l => labelIconMap.set(l, icon2941));
+label7077.forEach(l => labelIconMap.set(l, icon7077));
+label7085.forEach(l => labelIconMap.set(l, icon7085));
+label7110.forEach(l => labelIconMap.set(l, icon7110));
+label7701.forEach(l => labelIconMap.set(l, icon7701));
+label8008.forEach(l => labelIconMap.set(l, icon8008));
+label8014.forEach(l => labelIconMap.set(l, icon8014));
+label8075.forEach(l => labelIconMap.set(l, icon8075));
+label8109.forEach(l => labelIconMap.set(l, icon8109));
+label8122.forEach(l => labelIconMap.set(l, icon8122));
+label8155.forEach(l => labelIconMap.set(l, icon8155));
+labelkanachan.forEach(l => labelIconMap.set(l, iconkanachan));
+labelkanachumio.forEach(l => labelIconMap.set(l, iconkanachumio));
+labelkanachumk.forEach(l => labelIconMap.set(l, iconkanachumk));
+labelkanachump35.forEach(l => labelIconMap.set(l, iconkanachump35));
+labelkanachump37.forEach(l => labelIconMap.set(l, iconkanachump37));
+labelkanehachi.forEach(l => labelIconMap.set(l, iconkanehachi));
+labelkantomidi.forEach(l => labelIconMap.set(l, iconkantomidi));
+labelkeiohr.forEach(l => labelIconMap.set(l, iconkeiohr));
+labelkeiomklong.forEach(l => labelIconMap.set(l, iconkeiomklong));
+labelklhr.forEach(l => labelIconMap.set(l, iconklhr));
+labelkllt.forEach(l => labelIconMap.set(l, iconkllt));
+labelkwskhr.forEach(l => labelIconMap.set(l, iconkwskhr));
+labelliesse.forEach(l => labelIconMap.set(l, iconliesse));
+labelmk.forEach(l => labelIconMap.set(l, iconmk));
+labelmk517.forEach(l => labelIconMap.set(l, iconmk517));
+labelmk619.forEach(l => labelIconMap.set(l, iconmk619));
+labelmkf.forEach(l => labelIconMap.set(l, iconmkf));
+labelmp35silver.forEach(l => labelIconMap.set(l, iconmp35silver));
+labelmp37.forEach(l => labelIconMap.set(l, iconmp37));
+labelmp37black.forEach(l => labelIconMap.set(l, iconmp37black));
+labelmp37silver.forEach(l => labelIconMap.set(l, iconmp37silver));
+labelmp317.forEach(l => labelIconMap.set(l, iconmp317));
+labelnankairj.forEach(l => labelIconMap.set(l, iconnankairj));
+labelpdgkr.forEach(l => labelIconMap.set(l, iconpdgkr));
+labelpdglr.forEach(l => labelIconMap.set(l, iconpdglr));
+labelpkhr.forEach(l => labelIconMap.set(l, iconpkhr));
+labelrakuraku.forEach(l => labelIconMap.set(l, iconrakuraku));
+labelrakurakuf.forEach(l => labelIconMap.set(l, iconrakurakuf));
+labelrinkomio.forEach(l => labelIconMap.set(l, iconrinkomio));
+labelserega.forEach(l => labelIconMap.set(l, iconserega));
+labeltkgmk.forEach(l => labelIconMap.set(l, icontkgmk));   
+labeltoeimklong.forEach(l => labelIconMap.set(l, icontoeimklong));
+label234.forEach(l => labelIconMap.set(l, icon234));
+
+// デフォルトアイコンを設定（必要に応じて変更）
+const iconDefault = L.icon({ iconUrl: 'icon/yokokamo.png', iconSize: [48, 48] });
+
+// アイコン取得関数
+function getIconByLabel(label) {
+  return labelIconMap.get(label) || iconDefault;
+}
+
+
+    // routes.txt を読み込んで route_id => route_long_name を取得
+    async function loadRoutes() {
+      const res = await fetch('https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/routes.txt');
+      const text = await res.text();
+      const lines = text.trim().split('\n');
+      const headers = lines[0].split(',');
+      const routeIdIndex = headers.indexOf('route_id');
+      const nameIndex = headers.indexOf('route_long_name');
+
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(',');
+        routeNames[cols[routeIdIndex]] = cols[nameIndex];
+      }
+    }
+
+    // trips.txt を読み込んで trip_id => trip_headsign を取得
+    async function loadTrips() {
+      const res = await fetch('https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/trips.txt');
+      const text = await res.text();
+      const lines = text.trim().split('\n');
+      const headers = lines[0].split(',');
+      const tripIdIndex = headers.indexOf('trip_id');
+      const headsignIndex = headers.indexOf('trip_headsign');
+
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(',');
+        tripHeadsigns[cols[tripIdIndex]] = cols[headsignIndex];
+      }
+    }
+
+    // GTFS-RT データを取得し、マーカーを更新
+    async function fetchAndUpdate() {
+      try {
+        const response = await fetch('https://morning-sun-eb88.fujimaru703.workers.dev/');
+        const data = await response.json();
+
+        console.log('取得したGTFS-RTデータ:', data);
+
+        markers.forEach(marker => map.removeLayer(marker));
+        markers = [];
+
+        if (data.entity && Array.isArray(data.entity)) {
+          data.entity.forEach((entity, index) => {
+            if (entity.vehicle && entity.vehicle.position) {
+              const position = entity.vehicle.position;
+              const vehicleLabel = entity.vehicle.vehicle.label;
+              const routeId = entity.vehicle.trip.routeId;
+              const tripId = entity.vehicle.trip.tripId;
+              const routeName = routeNames[routeId] || '不明な路線';
+              const headsign = tripHeadsigns[tripId] || '不明な行き先';
+
+              if (!mapInitialized && index === 0) {
+                map.setView([position.latitude, position.longitude], 13);
+                mapInitialized = true;
+              }
+
+              // ラベルに基づいてアイコンを取得
+              const icon = getIconByLabel(vehicleLabel);
+
+              const marker = L.marker([position.latitude, position.longitude], { icon }).addTo(map);
+              marker.bindPopup(`<b>${vehicleLabel}</b><br>${routeName}<br>${headsign}`);
+              markers.push(marker);
+            }
+          });
+        } else {
+          console.error('不正なデータ形式:', data);
+        }
+      } catch (error) {
+        console.error('GTFS-RT取得エラー:', error);
+      }
+    }
+
+    // 初期化
+    Promise.all([loadRoutes(), loadTrips()])
+  .then(() => {
+    fetchAndUpdate();
+    setTimeout(fetchAndUpdate, 1000);
+  })
+  .catch((error) => {
+    console.error("エラーが発生しました:", error);
+  });
+  </script>
 </body>
 </html>
