@@ -355,6 +355,8 @@ async function loadShapes() {
     const headsign = cols[headsignIndex];
     const shapeId = cols[shapeIdIndex];
 
+    const tripToShapeMap = {};
+
     tripHeadsigns[tripId] = headsign;
     tripToShapeMap[tripId] = shapeId;
   }
