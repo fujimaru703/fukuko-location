@@ -387,6 +387,25 @@ async function loadShapes() {
                 mapInitialized = true;
               }
 
+              const marker = L.marker([position.latitude, position.longitude], { icon }).addTo(map);
+marker.bindPopup(`<b>${vehicleLabel}</b><br>${routeName}<br>${headsign}`);
+markers.push(marker);
+
+marker.on('click', () => {
+  if (currentPolyline) {
+    map.removeLayer(currentPolyline);
+    currentPolyline = null;
+  }
+
+  const shapeId = tripToShapeMap[tripId];
+  const coords = shapeCoords[shapeId];
+  if (coords) {
+    currentPolyline = L.polyline(coords, { color: 'blue', weight: 4 }).addTo(map);
+  } else {
+    console.warn('shape_idが見つかりません:', shapeId);
+  }
+});
+
               // ラベルに基づいてアイコンを取得
               const icon = getIconByLabel(vehicleLabel);
 
@@ -405,24 +424,7 @@ async function loadShapes() {
 
     let currentPolyline = null;
 
-const marker = L.marker([position.latitude, position.longitude], { icon }).addTo(map);
-marker.bindPopup(`<b>${vehicleLabel}</b><br>${routeName}<br>${headsign}`);
-markers.push(marker);
 
-marker.on('click', () => {
-  if (currentPolyline) {
-    map.removeLayer(currentPolyline);
-    currentPolyline = null;
-  }
-
-  const shapeId = tripToShapeMap[tripId];
-  const coords = shapeCoords[shapeId];
-  if (coords) {
-    currentPolyline = L.polyline(coords, { color: 'blue', weight: 4 }).addTo(map);
-  } else {
-    console.warn('shape_idが見つかりません:', shapeId);
-  }
-});
 
     // 初期化
     Promise.all([loadRoutes(), loadTrips(), loadShapes()]).then(() => {
