@@ -387,6 +387,11 @@ async function loadShapes() {
                 mapInitialized = true;
               }
 
+              
+
+              // ラベルに基づいてアイコンを取得
+              const icon = getIconByLabel(vehicleLabel);
+
               const marker = L.marker([position.latitude, position.longitude], { icon }).addTo(map);
 marker.bindPopup(`<b>${vehicleLabel}</b><br>${routeName}<br>${headsign}`);
 markers.push(marker);
@@ -405,15 +410,6 @@ marker.on('click', () => {
     console.warn('shape_idが見つかりません:', shapeId);
   }
 });
-
-              // ラベルに基づいてアイコンを取得
-              const icon = getIconByLabel(vehicleLabel);
-
-              const marker = L.marker([position.latitude, position.longitude], { icon }).addTo(map);
-              marker.bindPopup(`<b>${vehicleLabel}</b><br>${routeName}<br>${headsign}`);
-              markers.push(marker);
-            }
-          });
         } else {
           console.error('不正なデータ形式:', data);
         }
