@@ -23,8 +23,8 @@ const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors'
 });
 
-// OpenTopoMap（地形図）
-const topo = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg', {
+// 国土地理院（標準地図）
+const topo = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
   attribution: '&copy; 国土地理院'
 });
 
@@ -43,8 +43,8 @@ osm.addTo(map);
 // レイヤー選択UIを追加
 const baseMaps = {
   "OpenStreetMap": osm,
-  "地形図（OpenTopoMap）": topo,
-  "淡色地図（国土地理院）": gsi,
+  "標準地図（国土地理院）": topo,
+  "航空地図（国土地理院）": gsi,
   "夜間地図（Dark Mode）": dark
 };
 
