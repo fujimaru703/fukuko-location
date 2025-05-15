@@ -15,6 +15,7 @@
   <body bgcolor="#e7d7a8" text="#000000">
   <header>
     <div class="header-title"><div style="text-align:center">福島交通ロケーションマップ</div>
+      <div id="timestampDisplay"></div>
     </header>
   <div id="map"></div>
 
@@ -341,6 +342,19 @@ function getIconByLabel(label) {
         // エラーが発生した場合はここで処理
         console.error("データの取得に失敗しました:", error);
     }
+
+        const readableTimestamp = new Date(timestamp * 1000).toLocaleString('ja-JP', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false
+                    });
+
+                    // 右下に表示
+                    document.getElementById('timestampDisplay').innerText = `更新時刻: ${readableTimestamp}`;
 
     
     
