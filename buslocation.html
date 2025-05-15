@@ -330,18 +330,16 @@ function getIconByLabel(label) {
         const response = await fetch('https://morning-sun-eb88.fujimaru703.workers.dev/');
         const data = await response.json();
 
-        then(data => {
-            // 'header' オブジェクトが存在するか確認
-            if (data.header && data.header.timestamp) {
-                const timestamp = data.header.timestamp;  // timestampを取得
-                console.log(timestamp);  // コンソールに表示
-            } else {
-                console.log("Timestampが存在しません。");
-            }
-        })
-        .catch(error => {
-            console.error("データの取得に失敗しました:", error);
-        }); 
+        if (data.header && data.header.timestamp) {
+            const timestamp = data.header.timestamp;  // timestampを取得
+            console.log(timestamp);  // コンソールに表示
+        } else {
+            console.log("Timestampが存在しません。");
+        }
+    } catch (error) {
+        // エラーが発生した場合はここで処理
+        console.error("データの取得に失敗しました:", error);
+    }
 
     
     
