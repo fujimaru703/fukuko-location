@@ -10,5 +10,6 @@
 }
 
 #header-title {
-    height: 120px; /* 高さを120pxに設定 */
+  display: block;
+  height: 120px;
 }
