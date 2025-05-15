@@ -60,6 +60,8 @@ const baseMaps = {
   "夜間地図（Dark Mode）": dark
 };
 
+    L.control.layers(baseMaps).addTo(map);
+
     let markers = [];
     let mapInitialized = false;
     let routeNames = {}; // route_id => route_long_name
