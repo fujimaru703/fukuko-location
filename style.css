@@ -8,3 +8,7 @@
     font-size: 14px;     /* フォントサイズ調整 */
     border-radius: 5px;  /* 角を丸くする */
 }
+
+#header {
+    height: 120px; /* 高さを120pxに設定 */
+}
