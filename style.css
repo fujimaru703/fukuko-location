@@ -1,12 +1,13 @@
 #timestampDisplay {
-    position: absolute; /* 画面の一定位置に固定 */
-    bottom: 10px;    /* 画面下部から10px */
-    right: 10px;     /* 画面右端から10px */
+    position: fixed;  /* 画面上で固定 */
+    top: 10px;        /* 画面上部から10px */
+    right: 10px;      /* 画面右端から10px */
     padding: 10px;
     background-color: rgba(0, 0, 0, 0.5);
     color: white;
-    font-size: 6px;
+    font-size: 14px;   /* フォントサイズを少し大きくしました */
     border-radius: 5px;
+    z-index: 1000;     /* 他の要素に隠れないようにする */
 }
 
 
