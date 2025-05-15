@@ -1,9 +1,3 @@
-#map { height: 100%;
-           width: 100%;
-           position: absolute;
-           z-index: 1;
-         }
-
 #timestampDisplay {
     position: fixed;  /* 画面上で固定 */
     top: 5px;        /* 画面上部から10px */
