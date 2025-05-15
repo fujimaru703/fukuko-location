@@ -350,6 +350,8 @@ function getIconByLabel(label) {
 
                     // 右下に表示
                     L.control.layers(baseMaps).addTo(map);
+          
+          timestampControl.removeFrom(map)
 
     var timestampControl = L.control({position: 'bottomright'});
 
@@ -359,7 +361,7 @@ function getIconByLabel(label) {
             return div;
         };
 
-        timestampControl.removeFrom(map)
+        
         timestampControl.addTo(map); 
         
         } else {
