@@ -400,9 +400,6 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
 
 
     Promise.all([loadRoutes(), loadTrips()]).then(() => {
-  document.getElementById('openAllPopupsBtn').addEventListener('click', () => {
-    markers.forEach(marker => marker.openPopup());
-  });
       fetchAndUpdate();
       setInterval(fetchAndUpdate, 15000);
     });
