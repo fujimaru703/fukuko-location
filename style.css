@@ -10,7 +10,3 @@
     z-index: 9999;      /* 他の要素よりも上に表示されるようにz-indexを設定 */
 }
 
-#header-title {
-  display: block;
-  height: 30px;
-}
