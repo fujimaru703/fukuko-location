@@ -4,10 +4,21 @@
     top: 0; /* 上部に配置 */
     left: 0;
     width: 100%; /* 幅を画面いっぱいに */
-    background-color: #e7d7a8; /* 背景色 */
+    background-color: #e7d7a8; /* 背景色を指定 */
     color: white; /* 文字色 */
-    padding: 4px 0;
+    padding: 5px 0; /* 上下のパディングを減らして高さを縮小 */
     z-index: 1000; /* 他の要素の上に表示 */
+    display: flex;
+    justify-content: space-between; /* 左右に配置 */
+    align-items: center; /* 縦方向に中央揃え */
+    padding-left: 20px; /* 左端の余白 */
+    padding-right: 20px; /* 右端の余白 */
+}
+
+/* ページ名 */
+.header-title {
+    font-size: 20px; /* フォントサイズを少し小さく */
+    font-weight: bold;
 }
 
 /* ナビゲーションバー */
@@ -15,18 +26,17 @@
     list-style-type: none;
     margin: 0;
     padding: 0;
-    display: flex;
+    display: flex; /* 横並びにするためにflexboxを使用 */
 }
 
 .fixed-header nav ul li {
-    display: inline-block;
-    margin-right: 20px;
+    margin-right: 20px; /* リスト項目の間隔 */
 }
 
 .fixed-header nav ul li a {
     color: white;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 16px; /* リンクのフォントサイズを小さく */
 }
 
 .fixed-header nav ul li a:hover {
@@ -35,6 +45,6 @@
 
 /* コンテンツのスタイル */
 .content {
-    margin-top: 70px; /* 固定ヘッダーの高さ分の余白 */
+    margin-top: 60px; /* 固定ヘッダーの高さ分の余白を調整 */
     padding: 20px;
 }
