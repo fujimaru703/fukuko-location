@@ -74,7 +74,7 @@
     // カスタムアイコン作成
     function createBusIcon(label, zoom) {
       const [w, h] = getIconSize(zoom);
-      const iconUrl = labelIconMap.get(label)?.options.iconUrl || 'icon/yokokamo.png';
+      const iconUrl = labelIconMap.get(label) || 'icon/yokokamo.png';
       return L.icon({
         iconUrl: iconUrl,
         iconSize: [w, h],
