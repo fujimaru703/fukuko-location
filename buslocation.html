@@ -68,8 +68,10 @@
   const base = 32;
   const scale = Math.pow(1.2, zoom - 13);
   const rawSize = Math.round(base * scale);
-  const minSize = 24;
-  return [Math.max(rawSize, minSize), Math.max(rawSize, minSize)];
+  const minSize = 32;
+  const maxSize = 64;
+  const clamped = Math.max(minSize, Math.min(rawSize, maxSize));
+  return [clamped, clamped];
 }
 
     // カスタムアイコン作成
