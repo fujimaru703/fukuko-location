@@ -54,10 +54,35 @@
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script>
     const map = L.map('map').setView([37.75, 140.47], 13);
-    const baseTile = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
 
+    const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap contributors'
+});
+
+const topo = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
+  attribution: '&copy; 国土地理院'
+});
+
+const gsi = L.tileLayer('https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}', {
+  attribution: "<a href='https://developers.google.com/maps/documentation' target='_blank'>Google Map</a>"
+});
+
+const dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://carto.com/">Carto</a> | &copy; OpenStreetMap contributors'
+});
+
+// 初期レイヤーを追加
+osm.addTo(map);
+
+const baseMaps = {
+  "OpenStreetMap": osm,
+  "地理院地図": topo,
+  "Googlemap": gsi,
+  "夜間地図（Dark Mode）": dark
+};
+
+L.control.layers(baseMaps, null, { position: 'bottomright' }).addTo(map);
+  
     const routeNames = {};
     const tripHeadsigns = {};
     let markers = [];
