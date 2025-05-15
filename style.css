@@ -4,7 +4,7 @@
     top: 0; /* 上部に配置 */
     left: 0;
     width: 100%; /* 幅を画面いっぱいに */
-    background-color: #e7d7a8; /* 背景色を指定 */
+    background-color: #e7d7a8; /* 背景色 */
     color: white; /* 文字色 */
     padding: 5px 0; /* 上下のパディングを減らして高さを縮小 */
     z-index: 1000; /* 他の要素の上に表示 */
@@ -36,7 +36,7 @@
 .fixed-header nav ul li a {
     color: white;
     text-decoration: none;
-    font-size: 16px; /* リンクのフォントサイズを小さく */
+    font-size: 16px; /* リンクのフォントサイズ */
 }
 
 .fixed-header nav ul li a:hover {
