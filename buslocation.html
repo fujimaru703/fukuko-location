@@ -19,6 +19,8 @@
     </header>
   <div id="map"></div>
 
+    <div id="timestampDisplay"></div>
+
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script>
     const map = L.map('map');
@@ -398,6 +400,5 @@ function getIconByLabel(label) {
       setInterval(fetchAndUpdate,25000);
     });
   </script>
-    <div id="timestampDisplay"></div>
 </body>
 </html>
