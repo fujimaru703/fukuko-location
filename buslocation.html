@@ -349,10 +349,6 @@ function getIconByLabel(label) {
                 hour12: false
             });
 
-            // 右下に表示
-            document.getElementById('timestampDisplay').innerText = `更新時刻: ${readableTimestamp}`;
-            L.control.layers(baseMaps).addTo(map);
-
             console.log('取得したGTFS-RTデータ:', data);
 
             markers.forEach(marker => map.removeLayer(marker));
