@@ -1,0 +1,40 @@
+/* ヘッダーのスタイル */
+.fixed-header {
+    position: fixed; /* 固定 */
+    top: 0; /* 上部に配置 */
+    left: 0;
+    width: 100%; /* 幅を画面いっぱいに */
+    background-color: #e7d7a8; /* 背景色 */
+    color: white; /* 文字色 */
+    padding: 10px 0;
+    z-index: 1000; /* 他の要素の上に表示 */
+}
+
+/* ナビゲーションバー */
+.fixed-header nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.fixed-header nav ul li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.fixed-header nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.fixed-header nav ul li a:hover {
+    text-decoration: underline;
+}
+
+/* コンテンツのスタイル */
+.content {
+    margin-top: 70px; /* 固定ヘッダーの高さ分の余白 */
+    padding: 20px;
+}
