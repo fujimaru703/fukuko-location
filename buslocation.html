@@ -350,23 +350,7 @@ function getIconByLabel(label) {
                     document.getElementById('timestampDisplay').innerText = `更新時刻: ${readableTimestamp}`;
                     L.control.layers(baseMaps).addTo(map);
 
-    var timestampControl = L.control({position: 'bottomright'});
-
-        timestampControl.onAdd = function (map) {
-            var div = L.DomUtil.create('div', 'timestamp'); // div要素を作成
-            div.innerHTML = `最終更新: ${readableTimestamp}`; // 変換済みのtimestampを表示
-            return div;
-        };
-
-        timestampControl.addTo(map); 
-
-        } else {
-            console.log("Timestampが存在しません。");
-        }
-    } catch (error) {
-        // エラーが発生した場合はここで処理
-        console.error("データの取得に失敗しました:", error);
-    }
+    
 
         console.log('取得したGTFS-RTデータ:', data);
 
