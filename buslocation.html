@@ -348,10 +348,10 @@ function getIconByLabel(label) {
                         hour12: false
                     });
 
+          timestampControl.removeFrom(map);
+
                     // 右下に表示
                     L.control.layers(baseMaps).addTo(map);
-          
-          timestampControl.removeFrom(map)
 
     var timestampControl = L.control({position: 'bottomright'});
 
