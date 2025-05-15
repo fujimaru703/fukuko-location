@@ -56,17 +56,7 @@ const baseMaps = {
   "夜間地図（Dark Mode）": dark
 };
 
-L.control.layers(baseMaps).addTo(map);
 
-    var timestampControl = L.control({position: 'bottomright'});
-
-        timestampControl.onAdd = function (map) {
-            var div = L.DomUtil.create('div', 'timestamp'); // div要素を作成
-            div.innerHTML = `最終更新: ${readableTimestamp}`; // 変換済みのtimestampを表示
-            return div;
-        };
-
-        timestampControl.addTo(map); 
 
     let markers = [];
     let mapInitialized = false;
@@ -359,7 +349,17 @@ function getIconByLabel(label) {
                     });
 
                     // 右下に表示
-                    document.getElementById('timestampDisplay').innerText = `更新時刻: ${readableTimestamp}`;
+                    L.control.layers(baseMaps).addTo(map);
+
+    var timestampControl = L.control({position: 'bottomright'});
+
+        timestampControl.onAdd = function (map) {
+            var div = L.DomUtil.create('div', 'timestamp'); // div要素を作成
+            div.innerHTML = `最終更新: ${readableTimestamp}`; // 変換済みのtimestampを表示
+            return div;
+        };
+
+        timestampControl.addTo(map); 
         
         } else {
             console.log("Timestampが存在しません。");
