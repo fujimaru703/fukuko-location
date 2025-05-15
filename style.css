@@ -7,7 +7,7 @@
     color: white;
     font-size: 14px;   /* フォントサイズを少し大きくしました */
     border-radius: 5px;
-    z-index: 1000;     /* 他の要素に隠れないようにする */
+    z-index: 9999;     /* 他の要素に隠れないようにする */
 }
 
 
