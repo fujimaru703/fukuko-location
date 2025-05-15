@@ -1,6 +1,6 @@
 #timestampDisplay {
-  position: fixed; /* 固定位置にする */
-  bottom: 0px;     /* 画面の下から10pxの位置 */
+  position: absolute; /* 固定位置にする */
+  bottom: 10px;     /* 画面の下から10pxの位置 */
   right: 10px;      /* 画面の右から10pxの位置 */
   background-color: rgba(0, 0, 0, 0.7); /* 背景色（透過黒） */
   color: white;     /* 文字色 */
