@@ -1,14 +1,10 @@
 #timestampDisplay {
     position: absolute;
-    top: 10px;          /* 上からの位置調整（必要に応じて変更） */
+    top: 30px;          /* 上からの位置調整（必要に応じて変更） */
     right: 10px;        /* 右端からの位置調整（必要に応じて変更） */
     background-color: rgba(0, 0, 0, 0.5);  /* 背景色を半透明に設定 */
     color: white;       /* 文字色を白に設定 */
     padding: 5px 10px;  /* パディング調整 */
     font-size: 14px;     /* フォントサイズ調整 */
     border-radius: 5px;  /* 角を丸くする */
-}
-
-header {
-    height: 120px; /* 高さを120pxに設定 */
 }
