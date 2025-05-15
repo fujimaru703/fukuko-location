@@ -65,12 +65,12 @@
 
     // ズームレベルに応じたアイコンサイズ取得
     function getIconSize(zoom) {
-      const base = 32;
-      const scale = Math.pow(1.2, zoom - 13);
-      const size = Math.round(base * scale);
-      const minSize = 32; 
-      return [size, size];
-    }
+  const base = 32;
+  const scale = Math.pow(1.2, zoom - 13);
+  const rawSize = Math.round(base * scale);
+  const minSize = 24;
+  return [Math.max(rawSize, minSize), Math.max(rawSize, minSize)];
+}
 
     // カスタムアイコン作成
     function createBusIcon(label, zoom) {
