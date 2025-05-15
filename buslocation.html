@@ -53,6 +53,8 @@ const gsi = L.tileLayer('https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}', {
 // 初期レイヤーを地図に追加
 osm.addTo(map);
 
+    map.getPanes().overlayPane.style.zIndex = 1000;
+
 // レイヤー選択UIを追加
 const baseMaps = {
   "OpenStreetMap": osm,
