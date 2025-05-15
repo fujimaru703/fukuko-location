@@ -69,7 +69,7 @@
   const scale = Math.pow(1.2, zoom - 13);
   const rawSize = Math.round(base * scale);
   const minSize = 32;
-  const maxSize = 64;
+  const maxSize = 48;
   const clamped = Math.max(minSize, Math.min(rawSize, maxSize));
   return [clamped, clamped];
 }
