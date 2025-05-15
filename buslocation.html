@@ -334,16 +334,8 @@ function getIconByLabel(label) {
 
         if (data.header && data.header.timestamp) {
             const timestamp = data.header.timestamp;  // timestampを取得
-            console.log(timestamp);  // コンソールに表示
-        } else {
-            console.log("Timestampが存在しません。");
-        }
-    } catch (error) {
-        // エラーが発生した場合はここで処理
-        console.error("データの取得に失敗しました:", error);
-    }
 
-        const readableTimestamp = new Date(timestamp * 1000).toLocaleString('ja-JP', {
+          const readableTimestamp = new Date(timestamp * 1000).toLocaleString('ja-JP', {
                         year: 'numeric',
                         month: '2-digit',
                         day: '2-digit',
@@ -355,9 +347,14 @@ function getIconByLabel(label) {
 
                     // 右下に表示
                     document.getElementById('timestampDisplay').innerText = `更新時刻: ${readableTimestamp}`;
-
-    
-    
+        
+        } else {
+            console.log("Timestampが存在しません。");
+        }
+    } catch (error) {
+        // エラーが発生した場合はここで処理
+        console.error("データの取得に失敗しました:", error);
+    }
 
         console.log('取得したGTFS-RTデータ:', data);
 
