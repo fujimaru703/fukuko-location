@@ -58,6 +58,16 @@ const baseMaps = {
 
 L.control.layers(baseMaps).addTo(map);
 
+    var timestampControl = L.control({position: 'bottomright'});
+
+        timestampControl.onAdd = function (map) {
+            var div = L.DomUtil.create('div', 'timestamp'); // div要素を作成
+            div.innerHTML = `最終更新: ${timestamp}`; // 変換済みのtimestampを表示
+            return div;
+        };
+
+        timestampControl.addTo(map); 
+
     let markers = [];
     let mapInitialized = false;
     let routeNames = {}; // route_id => route_long_name
