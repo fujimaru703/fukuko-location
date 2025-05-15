@@ -9,6 +9,6 @@
     border-radius: 5px;  /* 角を丸くする */
 }
 
-#header {
+header-title {
     height: 120px; /* 高さを120pxに設定 */
 }
