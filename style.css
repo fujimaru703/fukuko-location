@@ -1,13 +1,13 @@
 #timestampDisplay {
-    position: absolute; /* 画面上に固定 */
-    bottom: 20px;       /* 画面下から20px */
-    right: 20px;        /* 画面右から20px */
-    background-color: rgba(0, 0, 0, 0.7); /* 背景色の透過 */
+    position: fixed;    /* 画面全体に対して固定 */
+    bottom: 10px;       /* 画面下部から10px */
+    right: 10px;        /* 画面右端から10px */
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
     color: white;
     font-size: 12px;
-    padding: 8px;
     border-radius: 5px;
-    z-index: 9999; /* 他の要素より前面に表示 */
+    z-index: 9999;      /* 他の要素よりも上に表示されるようにz-indexを設定 */
 }
 
 #header-title {
