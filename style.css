@@ -1,108 +1,32 @@
-/* ベース設定 */
 body {
-  margin: 0;
-  font-family: 'Noto Sans JP', sans-serif;
-  background-color: #ffffff;
-  color: #333333;
+    padding-top: 90px; /* ヘッダーの後ろに要素が隠れないようにするため */
 }
 
-/* ヘッダー */
-.header {
-  background-color: #ffffff;
-  border-bottom: 1px solid #dddddd;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
+header {
+    width: 100%; /* 幅いっぱいを指定 */
+    height: 50px; /* 高さを50pxに指定 */
+    background: #CCC; /* 背景色にグレーを指定 */
+    padding: 20px 50px; /* ヘッダーに上下左右それぞれ余白を指定 */
+    box-sizing: border-box; /* padding分を含んで幅を100%にするため */
+    position: fixed; /* ウィンドウを基準に画面に固定 */
+    top: 0; /* 上下の固定位置を上から0pxにする */
+    left: 0; /* 左右の固定位置を左から0pxにする */
+    display: flex; /* 中の要素を横並びにする */
+    align-items: center; /* 中の要素を上下中央に並べる */
 }
 
-.logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #003366;
+header .gnav .menu {
+    display: flex; /* 中の要素を横並びにする */
 }
 
-.nav ul {
-  list-style: none;
-  display: flex;
-  gap: 1.5rem;
-  margin: 0;
-  padding: 0;
+header .gnav .menu li {
+    list-style: none; /* リストの[・]を消す */
 }
 
-.nav a {
-  text-decoration: none;
-  color: #003366;
-  font-weight: 500;
+header .gnav .menu li + li {
+    margin-left: 40px; /* メニューそれぞれに間隔をあけるため */
 }
 
-.nav a:hover {
-  color: #0066cc;
+main {
+    height: 100vw; /* スクロールの演出を見れるようにmainに高さを指定 */
 }
-
-/* メインコンテンツ */
-.main {
-  padding: 2rem;
-}
-
-.hero {
-  background-color: #f0f8ff;
-  padding: 2rem;
-  text-align: center;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-}
-
-.hero h1 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  color: #003366;
-}
-
-.hero p {
-  font-size: 1.2rem;
-  color: #333333;
-}
-
-.news h2 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #003366;
-}
-
-.news ul {
-  list-style: none;
-  padding: 0;
-}
-
-.news li {
-  margin-bottom: 0.5rem;
-}
-
-.news a {
-  text-decoration: none;
-  color: #0066cc;
-}
-
-.news a:hover {
-  text-decoration: underline;
-}
-
-/* フッター */
-.footer {
-  background-color: #f8f8f8;
-  text-align: center;
-  padding: 1rem;
-  border-top: 1px solid #dddddd;
-  color: #666666;
-}
-
-/* レスポンシブ対応 */
-@media (max-width: 768px) {
-  .nav ul {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-}
-
-
