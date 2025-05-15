@@ -62,7 +62,7 @@ L.control.layers(baseMaps).addTo(map);
 
         timestampControl.onAdd = function (map) {
             var div = L.DomUtil.create('div', 'timestamp'); // div要素を作成
-            div.innerHTML = `最終更新: ${timestamp}`; // 変換済みのtimestampを表示
+            div.innerHTML = `最終更新: ${readableTimestamp}`; // 変換済みのtimestampを表示
             return div;
         };
 
