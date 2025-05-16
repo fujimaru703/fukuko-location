@@ -423,6 +423,7 @@ async function loadDelays() {
       tripDelays[trip.trip_id] = delaySec;
     }
   }
+    console.log(tripDelays);
 }
 
 // VehiclePosition を取得し、遅延しているバスの現在地に重み付きでプロット
