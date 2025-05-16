@@ -52,7 +52,19 @@
 <footer>
 <div id="timestampDisplay">最終更新: <span id="readableTimestamp"></span></div>
 </footer>
-<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js">
+async function updateAll() {
+  await loadDelays();
+  await showDelayedBusHeatmap();
+  await fetchAndUpdate();
+}
+
+window.addEventListener('load', () => {
+  updateAll();
+  setInterval(updateAll, 15000);
+});
+
+</script>
 <script>
     const map = L.map('map').setView([37.75, 140.47], 13);
     const baseTile = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -404,8 +416,32 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
       fetchAndUpdate();
       setInterval(fetchAndUpdate, 15000);
     });
-  </script>
-<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+  
+async function updateAll() {
+  await loadDelays();
+  await showDelayedBusHeatmap();
+  await fetchAndUpdate();
+}
+
+window.addEventListener('load', () => {
+  updateAll();
+  setInterval(updateAll, 15000);
+});
+
+</script>
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js">
+async function updateAll() {
+  await loadDelays();
+  await showDelayedBusHeatmap();
+  await fetchAndUpdate();
+}
+
+window.addEventListener('load', () => {
+  updateAll();
+  setInterval(updateAll, 15000);
+});
+
+</script>
 <script>
 let heatLayer;
 let tripDelays = {};
@@ -468,9 +504,19 @@ async function initDelayHeatmap() {
   await showDelayedBusHeatmap();
 }
 
+
+
+async function updateAll() {
+  await loadDelays();
+  await showDelayedBusHeatmap();
+  await fetchAndUpdate();
+}
+
 window.addEventListener('load', () => {
-  initDelayHeatmap();
+  updateAll();
+  setInterval(updateAll, 15000);
 });
+
 </script>
 </body>
 </html>
