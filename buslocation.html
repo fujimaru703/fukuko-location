@@ -291,7 +291,7 @@ labeltkgmk.forEach(label => labelIconMap.set(label, 'icon/tkg-mk.png'));
 const labeltoeimklong = ['7046','1990','7047','1999'];
 labeltoeimklong.forEach(label => labelIconMap.set(label, 'icon/toei-mk-long.png'));
 
-const label234 = ['8167','0429','0430','0431','8039','7135','7144','8159','7163','8072','7164','7166','8086','7171','8089','8090','8085','7172','8097','7181','8103','7182','8107','7186','8113','7187','8126','8133'];
+const label234 = ['8168','8167','0429','0430','0431','8039','7135','7144','8159','7163','8072','7164','7166','8086','7171','8089','8090','8085','7172','8097','7181','8103','7182','8107','7186','8113','7187','8126','8133'];
 label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
 
     function createBusIcon(label, zoom) {
@@ -417,7 +417,7 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
           marker.bindPopup(`
             <b>${label}</b><br>
             ${routeName}<br>
-            行き先：${headsign}<br>
+            ${headsign}<br>
             次は${stopName}<br>
             ${delayText}遅れ
           `);
