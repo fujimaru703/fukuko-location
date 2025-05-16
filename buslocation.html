@@ -69,6 +69,22 @@ window.addEventListener('load', () => {
 </script>
 <script>
     const map = L.map('map').setView([37.75, 140.47], 13);
+
+    // 🔥 ボタンと heatmapVisible フラグをここに追加
+let heatmapVisible = true;
+
+L.easyButton('🔥', function(btn, map) {
+  if (heatLayer) {
+    if (map.hasLayer(heatLayer)) {
+      map.removeLayer(heatLayer);
+      heatmapVisible = false;
+    } else {
+      heatLayer.addTo(map);
+      heatmapVisible = true;
+    }
+  }
+}, 'ヒートマップ切替').addTo(map);
+    
     const baseTile = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
