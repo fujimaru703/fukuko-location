@@ -420,7 +420,7 @@ async function loadDelays() {
     const updates = entity?.trip_update?.stop_time_update;
     if (trip && updates?.length > 0) {
       const delaySec = updates[0]?.departure?.delay || updates[0]?.arrival?.delay || 0;
-      tripDelays[trip.trip_id] = delaySec;
+      tripDelays[trip.tripId] = delaySec;
     }
   }
     console.log(tripDelays);
@@ -437,7 +437,7 @@ async function showDelayedBusHeatmap() {
     const vehicle = entity.vehicle;
     const pos = vehicle?.position;
     const tripId = vehicle?.trip?.trip_id;
-    const delaySec = tripDelays[tripId] || 0;
+    const delaySec = tripDelays[trip.tripId] || 0;
 
     if (pos && delaySec >= 300) {  // 5分以上の遅延
       const weight = Math.min(delaySec / 60, 20);
