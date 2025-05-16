@@ -164,7 +164,7 @@ L.control.layers(baseMaps, null, { position: 'bottomright' }).addTo(map);
           const pos = entity.vehicle.position;
           const label = entity.vehicle.vehicle.label;
           const routeId = entity.vehicle.trip.routeId;
-          const tripId = entity.vehicle.trip.trip_id;
+          const tripId = entity.vehicle.trip.tripId;
           const routeName = routeNames[routeId] || '不明な路線';
           const headsign = tripHeadsigns[tripId] || '不明な行き先';
           const icon = createBusIcon(label, zoom);
@@ -420,7 +420,7 @@ async function loadDelays() {
     const updates = entity?.trip_update?.stop_time_update;
     if (trip && updates?.length > 0) {
       const delaySec = updates[0]?.departure?.delay || updates[0]?.arrival?.delay || 0;
-      tripDelays[trip.trip_id] = delaySec;
+      tripDelays[trip.tripId] = delaySec;
     }
   }
     console.log(tripDelays);
@@ -436,7 +436,7 @@ async function showDelayedBusHeatmap() {
   for (const entity of data.entity) {
     const vehicle = entity.vehicle;
     const pos = vehicle?.position;
-    const tripId = vehicle?.trip?.trip_id;  // ← ✅ 修正（trip_id → tripId）
+    const tripId = vehicle?.trip?.tripId;  // ← ✅ 修正（trip_id → tripId）
 
     const delaySec = tripDelays[tripId] || 0;
 
