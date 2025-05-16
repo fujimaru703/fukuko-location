@@ -38,13 +38,28 @@
       font-size: 11px;
       border-radius: 5px;
       z-index: 9999;
-      white-space: nowrap;    
+      white-space: nowrap;
+
+　　header {
+  height: 50px;
+  background-color: #f4f4f4;
+  display: flex;
+  justify-content: center;  /* ← 中央配置 */
+  align-items: center;      /* ← 縦中央揃え */
+  font-size: 18px;
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+}
+
+#pageTitle {
+  text-align: center;
+}
     }
   </style>
 </head>
 <body>
 	<header>
-<div>福島交通ロケーションマップ</div>
+<div id="pageTitle">福島交通ロケーションマップ</div>
 		 <div id="map"></div>
 </header>
 	<footer>
