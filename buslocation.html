@@ -357,6 +357,8 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
             if (update?.departure?.delay != null) d = update.departure.delay;
             else if (update?.arrival?.delay != null) d = update.arrival.delay;
             if (typeof seq === 'number') {
+		    const rawStopId = update?.stopId;
+　　　　　　　　　　　const cleanedStopId = rawStopId ? rawStopId.replace(/^"|"$/g, '').trim() : '';
               delayMap[seq] = { delay: d, stopId: stopId };
             }
           }
