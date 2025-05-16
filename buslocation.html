@@ -527,50 +527,47 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
             vehicleLabel: label
           }).addTo(map);
 
-
-marker.on('click', () => {
-  // --- shapes 表示 ---
+	  marker.on('click', () => {
   const shapeId = tripShapeMap[tripId];
   const shapeCoords = shapeMap[shapeId];
   if (!shapeCoords) return;
   if (window.lastShapeLine) map.removeLayer(window.lastShapeLine);
   window.lastShapeLine = L.polyline(shapeCoords, { color: "blue", weight: 4 }).addTo(map);
-
-  // --- Haltestelle 表示（これからのバス停）---
-  if (window.futureHaltestelleMarkers) {
-    window.futureHaltestelleMarkers.forEach(m => map.removeLayer(m));
-  }
-  window.futureHaltestelleMarkers = [];
-
-  const delayMap = tripDelays[tripId] || {};
-  const currentSeq = vehicle.currentStopSequence;
-
-  for (const seqKey in delayMap) {
-    const seqNum = parseInt(seqKey);
-    if (seqNum <= currentSeq) continue;
-
-    const stopId = delayMap[seqKey]?.stopId;
-    const stopName = stopNames[stopId] || '停留所名不明';
-    const stopInfo = stopMap?.[stopId];
-
-    if (stopInfo && stopInfo.lat && stopInfo.lon) {
-      const icon = L.icon({
-        iconUrl: 'icon/Haltestelle.png',
-        iconSize: [24, 24],
-        iconAnchor: [12, 12],
-        popupAnchor: [0, -12]
-      });
-
-      const stopMarker = L.marker([stopInfo.lat, stopInfo.lon], { icon })
-        .bindPopup(`${stopName}`)
-        .addTo(map);
-
-      window.futureHaltestelleMarkers.push(stopMarker);
-    }
-  }
 });
 
+		// 既存マーカーを削除
+if (window.futureHaltestelleMarkers) {
+  window.futureHaltestelleMarkers.forEach(m => map.removeLayer(m));
+}
+window.futureHaltestelleMarkers = [];
 
+// stopSequenceから次以降の停留所を取得して表示
+const delayMap = tripDelays[tripId] || {};
+const currentSeq = vehicle.currentStopSequence;
+
+for (const seqKey in delayMap) {
+  const seqNum = parseInt(seqKey);
+  if (seqNum <= currentSeq) continue;
+
+  const stopId = delayMap[seqKey]?.stopId;
+  const stopName = stopNames[stopId] || '停留所名不明';
+  const stopInfo = stopMap?.[stopId]; // stopMap が必要
+
+  if (stopInfo && stopInfo.lat && stopInfo.lon) {
+    const icon = L.icon({
+      iconUrl: 'icon/Haltestelle.png',
+      iconSize: [24, 24],
+      iconAnchor: [12, 12],
+      popupAnchor: [0, -12]
+    });
+
+    const stopMarker = L.marker([stopInfo.lat, stopInfo.lon], { icon })
+      .bindPopup(`${stopName}`)
+      .addTo(map);
+
+    window.futureHaltestelleMarkers.push(stopMarker);
+  }
+}
 
 
           const delayText = formatDelay(delaySec || 0);
