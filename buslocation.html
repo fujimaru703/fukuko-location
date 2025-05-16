@@ -47,18 +47,16 @@
 <body>
 <header>
 <div>福島交通ロケーションマップ</div>
+    <!-- ✅ 右側に追加 -->
+  <button id="toggleHeatmap" style="
+    background: rgba(255,255,255,0.8);
+    border: 1px solid #888;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+  ">ヒートマップ切替</button>
 </header>
-    <button id="toggleHeatmap" style="
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 9999;
-  background: rgba(255,255,255,0.8);
-  border: 1px solid #888;
-  padding: 5px 10px;
-  font-size: 14px;
-  cursor: pointer;
-">ヒートマップ切替</button>
+    
 <div id="map"></div>
 <footer>
 <div id="timestampDisplay">最終更新: <span id="readableTimestamp"></span></div>
