@@ -306,11 +306,11 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
     }
 
     function formatDelay(sec) {
-      if (!sec || sec < 60) return `${sec}秒`;
-      const min = Math.floor(sec / 60);
-      const rem = sec % 60;
-      return `${min}分${rem}秒`;
-    }
+  if (!sec || sec < 60) return 'ほぼ定刻';
+  const min = Math.floor(sec / 60);
+  const rem = sec % 60;
+  return `${min}分${rem}秒遅れ`;
+}
 
     async function loadRoutes() {
       const res = await fetch('https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/routes.txt');
