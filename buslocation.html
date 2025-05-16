@@ -451,15 +451,21 @@ let tripDelays = {};
 
 // TripUpdate から trip_id ごとの遅延秒数を取得
 async function loadDelays() {
-  const res = await fetch('https://crimson-night-b53e.fujimaru703.workers.dev/'); // ← TripUpdateの中継JSON URLに変更してください
+  const res = await fetch('https://crimson-night-b53e.fujimaru703.workers.dev/');
   const data = await res.json();
+  tripDelays = {};
   for (const entity of data.entity) {
     const trip = entity?.tripUpdate?.trip;
     const updates = entity?.tripUpdate?.stopTimeUpdate;
     if (trip && updates?.length > 0) {
       let maxDelay = 0;
       for (const update of updates) {
-        const d = update?.departure?.delay || update?.arrival?.delay || 0;
+        let d = 0;
+        if (update?.departure?.delay != null) {
+          d = update.departure.delay;
+        } else if (update?.arrival?.delay != null) {
+          d = update.arrival.delay;
+        }
         if (typeof d === 'number' && d > maxDelay) {
           maxDelay = d;
         }
@@ -469,7 +475,7 @@ async function loadDelays() {
       }
     }
   }
-    console.log(tripDelays);
+  console.log("適用された遅延データ:", tripDelays);
 }
 
 // VehiclePosition を取得し、遅延しているバスの現在地に重み付きでプロット
