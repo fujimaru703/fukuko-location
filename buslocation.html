@@ -451,40 +451,25 @@ let tripDelays = {};
 
 // TripUpdate から trip_id ごとの遅延秒数を取得
 async function loadDelays() {
-  const res = await fetch('https://crimson-night-b53e.fujimaru703.workers.dev/');
+  const res = await fetch('https://crimson-night-b53e.fujimaru703.workers.dev/'); // ← TripUpdateの中継JSON URLに変更してください
   const data = await res.json();
-  tripDelays = {};
-
-  const now = Math.floor(Date.now() / 1000);  // 現在時刻（UNIX秒）
-
   for (const entity of data.entity) {
     const trip = entity?.tripUpdate?.trip;
     const updates = entity?.tripUpdate?.stopTimeUpdate;
     if (trip && updates?.length > 0) {
-      // 次の停留所（現在時刻より後の arrival.time を持つもの）を探す
-      let nextStop = updates.find(u =>
-        (u.arrival && typeof u.arrival.time === 'number' && u.arrival.time > now) ||
-        (u.departure && typeof u.departure.time === 'number' && u.departure.time > now)
-      );
-
-      // それでも見つからなければ、最初の stopTimeUpdate を使う
-      if (!nextStop) nextStop = updates[0];
-
-      let d = 0;
-      if (nextStop?.departure?.delay != null) {
-        d = nextStop.departure.delay;
-      } else if (nextStop?.arrival?.delay != null) {
-        d = nextStop.arrival.delay;
+      let maxDelay = 0;
+      for (const update of updates) {
+        const d = update?.departure?.delay || update?.arrival?.delay || 0;
+        if (typeof d === 'number' && d > maxDelay) {
+          maxDelay = d;
+        }
       }
-
-      // 🔴 しきい値（例：5分 = 300秒）以上のみ記録
-      if (typeof d === 'number' && d >= 300) {
-        tripDelays[trip.tripId] = d;
+      if (maxDelay >= 300) {
+        tripDelays[trip.tripId] = maxDelay;
       }
     }
   }
-
-  console.log("次のバス停のdelay適用済み:", tripDelays);
+    console.log(tripDelays);
 }
 
 // VehiclePosition を取得し、遅延しているバスの現在地に重み付きでプロット
