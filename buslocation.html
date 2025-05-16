@@ -93,6 +93,46 @@ map.on('zoomend', () => {
   }
 });
 
+
+let lastHeatPoints = [];
+
+function renderHeatmap(points) {
+  lastHeatPoints = points;
+  const zoom = map.getZoom();
+  const radius = Math.max(10, 40 - (18 - zoom) * 2);
+
+  if (heatLayer) map.removeLayer(heatLayer);
+  heatLayer = L.heatLayer(points, {
+    radius: radius,
+    blur: 15,
+    maxZoom: 18
+  }).addTo(map);
+}
+
+map.on('zoomend', () => {
+  const zoom = map.getZoom();
+  const radius = Math.max(10, 40 - (18 - zoom) * 2);
+  if (lastHeatPoints.length > 0) {
+    if (heatLayer) map.removeLayer(heatLayer);
+    heatLayer = L.heatLayer(lastHeatPoints, {
+      radius: radius,
+      blur: 15,
+      maxZoom: 18
+    }).addTo(map);
+  }
+});
+
+async function updateAll() {
+  await loadDelays();
+  await showDelayedBusHeatmap();
+  await fetchAndUpdate();
+}
+
+window.addEventListener('load', () => {
+  updateAll();
+  setInterval(updateAll, 15000);
+});
+
 </script>
 <script>
     const map = L.map('map').setView([37.75, 140.47], 13);
@@ -486,6 +526,46 @@ map.on('zoomend', () => {
   }
 });
 
+
+let lastHeatPoints = [];
+
+function renderHeatmap(points) {
+  lastHeatPoints = points;
+  const zoom = map.getZoom();
+  const radius = Math.max(10, 40 - (18 - zoom) * 2);
+
+  if (heatLayer) map.removeLayer(heatLayer);
+  heatLayer = L.heatLayer(points, {
+    radius: radius,
+    blur: 15,
+    maxZoom: 18
+  }).addTo(map);
+}
+
+map.on('zoomend', () => {
+  const zoom = map.getZoom();
+  const radius = Math.max(10, 40 - (18 - zoom) * 2);
+  if (lastHeatPoints.length > 0) {
+    if (heatLayer) map.removeLayer(heatLayer);
+    heatLayer = L.heatLayer(lastHeatPoints, {
+      radius: radius,
+      blur: 15,
+      maxZoom: 18
+    }).addTo(map);
+  }
+});
+
+async function updateAll() {
+  await loadDelays();
+  await showDelayedBusHeatmap();
+  await fetchAndUpdate();
+}
+
+window.addEventListener('load', () => {
+  updateAll();
+  setInterval(updateAll, 15000);
+});
+
 </script>
 <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js">
 async function updateAll() {
@@ -526,6 +606,46 @@ map.on('zoomend', () => {
       maxZoom: 18
     }).addTo(map);
   }
+});
+
+
+let lastHeatPoints = [];
+
+function renderHeatmap(points) {
+  lastHeatPoints = points;
+  const zoom = map.getZoom();
+  const radius = Math.max(10, 40 - (18 - zoom) * 2);
+
+  if (heatLayer) map.removeLayer(heatLayer);
+  heatLayer = L.heatLayer(points, {
+    radius: radius,
+    blur: 15,
+    maxZoom: 18
+  }).addTo(map);
+}
+
+map.on('zoomend', () => {
+  const zoom = map.getZoom();
+  const radius = Math.max(10, 40 - (18 - zoom) * 2);
+  if (lastHeatPoints.length > 0) {
+    if (heatLayer) map.removeLayer(heatLayer);
+    heatLayer = L.heatLayer(lastHeatPoints, {
+      radius: radius,
+      blur: 15,
+      maxZoom: 18
+    }).addTo(map);
+  }
+});
+
+async function updateAll() {
+  await loadDelays();
+  await showDelayedBusHeatmap();
+  await fetchAndUpdate();
+}
+
+window.addEventListener('load', () => {
+  updateAll();
+  setInterval(updateAll, 15000);
 });
 
 </script>
@@ -578,11 +698,6 @@ async function showDelayedBusHeatmap() {
 
   if (heatLayer) map.removeLayer(heatLayer);
   renderHeatmap(delayPoints);
-  return;
-    radius: 30,
-    blur: 15,
-    maxZoom: 15
-  }).addTo(map);
 }
 
 
@@ -632,6 +747,46 @@ map.on('zoomend', () => {
       maxZoom: 18
     }).addTo(map);
   }
+});
+
+
+let lastHeatPoints = [];
+
+function renderHeatmap(points) {
+  lastHeatPoints = points;
+  const zoom = map.getZoom();
+  const radius = Math.max(10, 40 - (18 - zoom) * 2);
+
+  if (heatLayer) map.removeLayer(heatLayer);
+  heatLayer = L.heatLayer(points, {
+    radius: radius,
+    blur: 15,
+    maxZoom: 18
+  }).addTo(map);
+}
+
+map.on('zoomend', () => {
+  const zoom = map.getZoom();
+  const radius = Math.max(10, 40 - (18 - zoom) * 2);
+  if (lastHeatPoints.length > 0) {
+    if (heatLayer) map.removeLayer(heatLayer);
+    heatLayer = L.heatLayer(lastHeatPoints, {
+      radius: radius,
+      blur: 15,
+      maxZoom: 18
+    }).addTo(map);
+  }
+});
+
+async function updateAll() {
+  await loadDelays();
+  await showDelayedBusHeatmap();
+  await fetchAndUpdate();
+}
+
+window.addEventListener('load', () => {
+  updateAll();
+  setInterval(updateAll, 15000);
 });
 
 </script>
