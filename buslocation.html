@@ -530,6 +530,25 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
   if (!shapeCoords) return;
   if (window.lastShapeLine) map.removeLayer(window.lastShapeLine);
   window.lastShapeLine = L.polyline(shapeCoords, { color: "blue", weight: 4 }).addTo(map);
+
+		   // --- 👇 追加: これから停車するバス停を描画 ---
+  const updates = tripUpdates[tripId] || [];
+  for (const update of updates) {
+    if (update.stopSequence <= seq) continue;
+
+    const stopId = update.stopId?.replace(/^"|"$/g, '').trim();
+    const stop = stopMap[stopId];
+    if (!stop) continue;
+
+    const arrivalSec = update.arrival?.time || update.departure?.time;
+    const timeStr = arrivalSec
+      ? new Date(arrivalSec * 1000).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
+      : '時刻不明';
+
+    L.marker([stop.lat, stop.lon], {
+      icon: L.divIcon({ className: 'stop-label', html: '📍' })
+    }).bindPopup(`${stop.name}<br>到着予定：${timeStr}`).addTo(map);
+  }
 });
 
           const delayText = formatDelay(delaySec || 0);
