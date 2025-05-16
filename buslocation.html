@@ -6,6 +6,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <link href="icon-24x24.png" rel="icon"/>
 <title>福島交通ロケーションマップ</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-easybutton/src/easy-button.css">
 <link href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" rel="stylesheet"/>
 <link href="style.css" rel="stylesheet"/>
 <style>
@@ -47,14 +48,6 @@
 <body>
 <header>
 <div>福島交通ロケーションマップ</div>
-    <!-- ✅ 右側に追加 -->
-  <button id="toggleHeatmap" style="
-    background: rgba(255,255,255,0.8);
-    border: 1px solid #888;
-    padding: 5px 10px;
-    font-size: 14px;
-    cursor: pointer;
-  ">ヒートマップ切替</button>
 </header>
     
 <div id="map"></div>
@@ -431,18 +424,6 @@ async function updateAll() {
   await showDelayedBusHeatmap();
   await fetchAndUpdate();
 }
-
-    // ✅ ヒートマップ表示切替ボタンの処理
-document.getElementById('toggleHeatmap').addEventListener('click', () => {
-  if (!heatLayer) return;
-  if (map.hasLayer(heatLayer)) {
-    map.removeLayer(heatLayer);
-    heatmapVisible = false;
-  } else {
-    heatLayer.addTo(map);
-    heatmapVisible = true;
-  }
-});
 
 
 window.addEventListener('load', () => {
