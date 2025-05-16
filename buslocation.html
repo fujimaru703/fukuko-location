@@ -451,26 +451,34 @@ let tripDelays = {};
 
 // TripUpdate から trip_id ごとの遅延秒数を取得
 async function loadDelays() {
-  const res = await fetch('https://crimson-night-b53e.fujimaru703.workers.dev/'); // ← TripUpdateの中継JSON URLに変更してください
+  const res = await fetch('https://crimson-night-b53e.fujimaru703.workers.dev/');
   const data = await res.json();
+  tripDelays = {};  // tripId → { stopSequence → delay }
+
   for (const entity of data.entity) {
     const trip = entity?.tripUpdate?.trip;
     const updates = entity?.tripUpdate?.stopTimeUpdate;
+
     if (trip && updates?.length > 0) {
-      let maxDelay = 0;
+      const sequenceToDelay = {};
       for (const update of updates) {
-        const d = update?.departure?.delay || update?.arrival?.delay || 0;
-        if (typeof d === 'number' && d > maxDelay) {
-          maxDelay = d;
+        const seq = update?.stopSequence;
+        let d = 0;
+        if (update?.departure?.delay != null) {
+          d = update.departure.delay;
+        } else if (update?.arrival?.delay != null) {
+          d = update.arrival.delay;
+        }
+        if (typeof seq === 'number') {
+          sequenceToDelay[seq] = d;
         }
       }
-      if (maxDelay >= 300) {
-        tripDelays[trip.tripId] = maxDelay;
-      }
+      tripDelays[trip.tripId] = sequenceToDelay;
     }
   }
-    console.log(tripDelays);
+  console.log("tripDelays by stopSequence", tripDelays);
 }
+
 
 // VehiclePosition を取得し、遅延しているバスの現在地に重み付きでプロット
 async function showDelayedBusHeatmap() {
@@ -482,13 +490,15 @@ async function showDelayedBusHeatmap() {
   for (const entity of data.entity) {
     const vehicle = entity.vehicle;
     const pos = vehicle?.position;
-    const tripId = vehicle?.trip?.tripId;  // ← ✅ 修正（trip_id → tripId）
+    const tripId = vehicle?.trip?.tripId;
+    const seq = vehicle?.currentStopSequence;
 
-    const delaySec = tripDelays[tripId];
-
-    if (pos && typeof delaySec === 'number' && delaySec >= 300) {
-      const weight = Math.min(delaySec / 60, 20);
-      delayPoints.push([pos.latitude, pos.longitude, weight]);
+    if (tripId && typeof seq === 'number' && tripDelays[tripId]) {
+      const delaySec = tripDelays[tripId][seq];
+      if (pos && typeof delaySec === 'number' && delaySec >= 300) {
+        const weight = Math.min(delaySec / 60, 20);
+        delayPoints.push([pos.latitude, pos.longitude, weight]);
+      }
     }
   }
 
@@ -497,8 +507,13 @@ async function showDelayedBusHeatmap() {
     radius: 30,
     blur: 15,
     maxZoom: 15
-  }).addTo(map);
+  });
+
+  if (heatmapVisible && delayPoints.length > 0) {
+    heatLayer.addTo(map);
+  }
 }
+
 
 
 // ヒートマップ初期化
