@@ -28,7 +28,7 @@
       color: white;
       padding: 10px;
     }
-	  
+
     #timestampDisplay {
       position: absolute;
       top: 10px;
@@ -78,8 +78,8 @@
 	<footer>
 		<div id="timestampDisplay">最終更新: <span id="readableTimestamp"></span></div>
 	</footer>
- 
-  
+
+
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
@@ -104,9 +104,6 @@
     const stopNames = {};  // stop_id → stop_name
     let shapeMap = {};  // shape_id → [[lat, lon], ...]
     let tripShapeMap = {}; // trip_id → shape_id
-    const stopMap = {};         // stop_id → {name, lat, lon}
-    const tripUpdates = {};     // trip_id → stopTimeUpdate[] 全体をキャッシュ
-
 
     L.easyButton({
   states: [{
@@ -137,7 +134,7 @@
     const labelIconMap = new Map();
     const label290 = ['2007','8015','8016','8037','8038','8057','8058','8059','8077','8078','8079','8081','8101','8102','0873','0874','8127','8137','8138','8139','8140','8141','8143','8144','8145','8146','2006','0741','0743','0744','0774','0775','0803','8060','8061','7165','8080','80801','8098','8099','8100','8128','8129','8156','8157','8158','0887','0889'];
     label290.forEach(label => labelIconMap.set(label, 'icon/290.png'));
-	
+
 	const label557 = ['0557','2411','2412'];
 label557.forEach(label => labelIconMap.set(label, 'icon/557&2411.png'));
 
@@ -383,6 +380,17 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
     }
 
     async function loadTrips() {
+      const res = await fetch('https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/trips.txt');
+      const text = await res.text();
+      const [header, ...lines] = text.trim().split('\n');
+      const headers = header.split(',');
+      const idIdx = headers.indexOf('trip_id');
+      const headIdx = headers.indexOf('trip_headsign');
+      for (const line of lines) {
+        const cols = line.split(',');
+        tripHeadsigns[cols[idIdx]] = cols[headIdx];
+      }
+    }
   const res = await fetch('https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/trips.txt');
   const text = await res.text();
   const [header, ...lines] = text.trim().split('\n');
@@ -439,43 +447,31 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
 }
 
 
-	  
+
 
     async function loadStops() {
-  const res = await fetch("https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/stops.txt");
-  const text = await res.text();
-  const [header, ...lines] = text.trim().split('\n');
-  const headers = header.split(',');
-  const idIdx = headers.indexOf('stop_id');
-  const nameIdx = headers.indexOf('stop_name');
-  const latIdx = headers.indexOf('stop_lat');
-  const lonIdx = headers.indexOf('stop_lon');
-
-  for (const line of lines) {
-    const cols = line.split(',');
-    const stopId = cols[idIdx].replace(/^"|"$/g, '').trim();
-    stopMap[stopId] = {
-      name: cols[nameIdx],
-      lat: parseFloat(cols[latIdx]),
-      lon: parseFloat(cols[lonIdx])
-    };
-  }
+      const res = await fetch('https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/stops.txt');
+      const text = await res.text();
+      const [header, ...lines] = text.trim().split('\n');
+      const headers = header.split(',');
+      const idIdx = headers.indexOf('stop_id');
+      const nameIdx = headers.indexOf('stop_name');
+      for (const line of lines) {
+  const cols = line.split(',');
+  const rawId = cols[idIdx]?.replace(/^"|"$/g, '').trim();
+  const name = cols[nameIdx]?.trim();
+  stopNames[rawId] = name;
 }
+    }
 
-
-   async function loadDelays() {
+    async function loadDelays() {
   const res = await fetch('https://crimson-night-b53e.fujimaru703.workers.dev/');
   const data = await res.json();
-
   tripDelays = {};
-  tripUpdates = {}; // ← ★ これを追加
-
   for (const entity of data.entity) {
     const trip = entity?.tripUpdate?.trip;
     const updates = entity?.tripUpdate?.stopTimeUpdate;
     if (trip && updates?.length > 0) {
-      tripUpdates[trip.tripId] = updates;  // ← ★ これがポップアップ表示に必要！
-
       const delayMap = {};
       for (const update of updates) {
         const seq = update?.stopSequence;
@@ -492,7 +488,6 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
     }
   }
 }
-
 
     async function showDelayedBusHeatmap() {
       const res = await fetch('https://morning-sun-eb88.fujimaru703.workers.dev/');
@@ -530,25 +525,6 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
   if (!shapeCoords) return;
   if (window.lastShapeLine) map.removeLayer(window.lastShapeLine);
   window.lastShapeLine = L.polyline(shapeCoords, { color: "blue", weight: 4 }).addTo(map);
-
-		   // --- 👇 追加: これから停車するバス停を描画 ---
-  const updates = tripUpdates[tripId] || [];
-  for (const update of updates) {
-    if (update.stopSequence <= seq) continue;
-
-    const stopId = update.stopId?.replace(/^"|"$/g, '').trim();
-    const stop = stopMap[stopId];
-    if (!stop) continue;
-
-    const arrivalSec = update.arrival?.time || update.departure?.time;
-    const timeStr = arrivalSec
-      ? new Date(arrivalSec * 1000).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
-      : '時刻不明';
-
-    L.marker([stop.lat, stop.lon], {
-      icon: L.divIcon({ className: 'stop-label', html: '📍' })
-    }).bindPopup(`${stop.name}<br>到着予定：${timeStr}`).addTo(map);
-  }
 });
 
           const delayText = formatDelay(delaySec || 0);
