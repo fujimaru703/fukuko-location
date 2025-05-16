@@ -334,9 +334,11 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
       const idIdx = headers.indexOf('stop_id');
       const nameIdx = headers.indexOf('stop_name');
       for (const line of lines) {
-        const cols = line.split(',');
-        stopNames[cols[idIdx]] = cols[nameIdx];
-      }
+  const cols = line.split(',');
+  const rawId = cols[idIdx]?.replace(/^"|"$/g, '').trim();
+  const name = cols[nameIdx]?.trim();
+  stopNames[rawId] = name;
+}
     }
 
     async function loadDelays() {
