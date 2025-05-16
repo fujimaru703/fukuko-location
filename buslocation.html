@@ -541,15 +541,7 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
       heatLayer = L.heatLayer(delayPoints, {
         radius: 30,
         blur: 15,
-        maxZoom: 15,
-	max: 20,  // delaySec / 60 の最大値が20分である前提
-  gradient: {
-    0.1: 'blue',
-    0.3: 'lime',
-    0.6: 'orange',
-    0.8: 'red',
-    1.0: 'purple'  // 20分以上の遅延を紫で表現
-  }
+        maxZoom: 15
       });
       if (heatmapVisible && delayPoints.length > 0) {
         heatLayer.addTo(map);
