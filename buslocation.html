@@ -1,13 +1,14 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="icon-24x24.png">
-  <title>福島交通ロケーションマップ</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-  <link rel="stylesheet" href="style.css">
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="icon-24x24.png" rel="icon"/>
+<title>福島交通ロケーションマップ</title>
+<link href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"/>
+<style>
     html, body {
       height: 100%;
       margin: 0;
@@ -42,17 +43,17 @@
       white-space: nowrap;
     }
   </style>
-</head>
+</link></head>
 <body>
-  <header>
-    <div>福島交通ロケーションマップ</div>
-  </header>
-  <div id="map"></div>
-  <footer>
-    <div id="timestampDisplay">最終更新: <span id="readableTimestamp"></span></div>
-  </footer>
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-  <script>
+<header>
+<div>福島交通ロケーションマップ</div>
+</header>
+<div id="map"></div>
+<footer>
+<div id="timestampDisplay">最終更新: <span id="readableTimestamp"></span></div>
+</footer>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script>
     const map = L.map('map').setView([37.75, 140.47], 13);
     const baseTile = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
@@ -404,5 +405,62 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
       setInterval(fetchAndUpdate, 15000);
     });
   </script>
+
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+<script>
+let heatLayer;
+let tripDelays = {};
+
+// TripUpdate から trip_id ごとの遅延秒数を取得
+async function loadDelays() {
+  const res = await fetch('https://crimson-night-b53e.fujimaru703.workers.dev/'); // ← TripUpdateの中継JSON URLに変更してください
+  const data = await res.json();
+  for (const entity of data.entity) {
+    const trip = entity?.trip_update?.trip;
+    const updates = entity?.trip_update?.stop_time_update;
+    if (trip && updates?.length > 0) {
+      const delaySec = updates[0]?.departure?.delay || updates[0]?.arrival?.delay || 0;
+      tripDelays[trip.trip_id] = delaySec;
+    }
+  }
+}
+
+// VehiclePosition を取得し、遅延しているバスの現在地に重み付きでプロット
+async function showDelayedBusHeatmap() {
+  const res = await fetch('https://morning-sun-eb88.fujimaru703.workers.dev/'); // ← VehiclePositionの中継JSON URLに変更してください
+  const data = await res.json();
+
+  const delayPoints = [];
+
+  for (const entity of data.entity) {
+    const vehicle = entity.vehicle;
+    const pos = vehicle?.position;
+    const tripId = vehicle?.trip?.trip_id;
+    const delaySec = tripDelays[tripId] || 0;
+
+    if (pos && delaySec >= 300) {  // 5分以上の遅延
+      const weight = Math.min(delaySec / 60, 20);
+      delayPoints.push([pos.latitude, pos.longitude, weight]);
+    }
+  }
+
+  if (heatLayer) map.removeLayer(heatLayer);
+  heatLayer = L.heatLayer(delayPoints, {
+    radius: 30,
+    blur: 15,
+    maxZoom: 15
+  }).addTo(map);
+}
+
+// ヒートマップ初期化
+async function initDelayHeatmap() {
+  await loadDelays();
+  await showDelayedBusHeatmap();
+}
+
+window.addEventListener('load', () => {
+  initDelayHeatmap();
+});
+</script>
 </body>
 </html>
