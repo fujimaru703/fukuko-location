@@ -342,30 +342,29 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
     }
 
     async function loadDelays() {
-      const res = await fetch('https://crimson-night-b53e.fujimaru703.workers.dev/');
-      const data = await res.json();
-      tripDelays = {};
-      for (const entity of data.entity) {
-        const trip = entity?.tripUpdate?.trip;
-        const updates = entity?.tripUpdate?.stopTimeUpdate;
-        if (trip && updates?.length > 0) {
-          const delayMap = {};
-          for (const update of updates) {
-            const seq = update?.stopSequence;
-            const stopId = update?.stopId;
-            let d = 0;
-            if (update?.departure?.delay != null) d = update.departure.delay;
-            else if (update?.arrival?.delay != null) d = update.arrival.delay;
-            if (typeof seq === 'number') {
-		    const rawStopId = update?.stopId;
-　　　　　　　　　　　const cleanedStopId = rawStopId ? rawStopId.replace(/^"|"$/g, '').trim() : '';
-              delayMap[seq] = { delay: d, stopId: stopId };
-            }
-          }
-          tripDelays[trip.tripId] = delayMap;
+  const res = await fetch('https://crimson-night-b53e.fujimaru703.workers.dev/');
+  const data = await res.json();
+  tripDelays = {};
+  for (const entity of data.entity) {
+    const trip = entity?.tripUpdate?.trip;
+    const updates = entity?.tripUpdate?.stopTimeUpdate;
+    if (trip && updates?.length > 0) {
+      const delayMap = {};
+      for (const update of updates) {
+        const seq = update?.stopSequence;
+        const rawStopId = update?.stopId;
+        const stopId = rawStopId ? rawStopId.replace(/^"|"$/g, '').trim() : '';
+        let d = 0;
+        if (update?.departure?.delay != null) d = update.departure.delay;
+        else if (update?.arrival?.delay != null) d = update.arrival.delay;
+        if (typeof seq === 'number') {
+          delayMap[seq] = { delay: d, stopId: stopId };
         }
       }
+      tripDelays[trip.tripId] = delayMap;
     }
+  }
+}
 
     async function showDelayedBusHeatmap() {
       const res = await fetch('https://morning-sun-eb88.fujimaru703.workers.dev/');
