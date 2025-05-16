@@ -7,10 +7,26 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet-easybutton/src/easy-button.css" />
   <style>
-    html, body, #map {
+    html, body {
       height: 100%;
       margin: 0;
       padding: 0;
+      position: relative;
+      background-color: #e7d7a8;
+      color: #000000;
+    }
+    #map {
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      z-index: 1;
+    }
+    footer {
+      position: relative;
+      height: 25px;
+      background-color: #333;
+      color: white;
+      padding: 10px;
     }
     #timestampDisplay {
       position: absolute;
@@ -22,25 +38,19 @@
       font-size: 11px;
       border-radius: 5px;
       z-index: 9999;
-
-　　 footer {
-    position: relative; /* footerを基準に#timestampDisplayを配置 */
-    height: 25px; /* フッターの高さを調整 */
-    background-color: #333; /* フッター背景色（任意） */
-    color: white;
-    padding: 10px;
-}    
+      white-space: nowrap;    
     }
   </style>
 </head>
 <body>
 	<header>
 <div>福島交通ロケーションマップ</div>
+		 <div id="map"></div>
 </header>
 	<footter>
 		<div id="timestampDisplay">最終更新: <span id="readableTimestamp"></span></div>
 	</footter>
-  <div id="map"></div>
+ 
   
 
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
