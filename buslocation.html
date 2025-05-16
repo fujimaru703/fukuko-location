@@ -428,7 +428,7 @@ async function loadDelays() {
 
 // VehiclePosition を取得し、遅延しているバスの現在地に重み付きでプロット
 async function showDelayedBusHeatmap() {
-  const res = await fetch('https://morning-sun-eb88.fujimaru703.workers.dev/'); // ← VehiclePositionの中継JSON URLに変更してください
+  const res = await fetch('https://morning-sun-eb88.fujimaru703.workers.dev/');
   const data = await res.json();
 
   const delayPoints = [];
@@ -436,10 +436,11 @@ async function showDelayedBusHeatmap() {
   for (const entity of data.entity) {
     const vehicle = entity.vehicle;
     const pos = vehicle?.position;
-    const tripId = vehicle?.trip?.trip_id;
-    const delaySec = tripDelays[trip.tripId] || 0;
+    const tripId = vehicle?.trip?.tripId;  // ← ✅ 修正（trip_id → tripId）
 
-    if (pos && delaySec >= 300) {  // 5分以上の遅延
+    const delaySec = tripDelays[tripId] || 0;
+
+    if (pos && delaySec >= 300) {
       const weight = Math.min(delaySec / 60, 20);
       delayPoints.push([pos.latitude, pos.longitude, weight]);
     }
@@ -452,6 +453,7 @@ async function showDelayedBusHeatmap() {
     maxZoom: 15
   }).addTo(map);
 }
+
 
 // ヒートマップ初期化
 async function initDelayHeatmap() {
