@@ -527,16 +527,16 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
             vehicleLabel: label
           }).addTo(map);
 
-	  marker.on('click', () => {
-  // --- 1. shapes表示 ---
+
+marker.on('click', () => {
+  // --- shapes 表示 ---
   const shapeId = tripShapeMap[tripId];
   const shapeCoords = shapeMap[shapeId];
   if (!shapeCoords) return;
-
   if (window.lastShapeLine) map.removeLayer(window.lastShapeLine);
   window.lastShapeLine = L.polyline(shapeCoords, { color: "blue", weight: 4 }).addTo(map);
 
-  // --- 2. Haltestelle 停留所表示（currentStopSequence以降）---
+  // --- Haltestelle 表示（これからのバス停）---
   if (window.futureHaltestelleMarkers) {
     window.futureHaltestelleMarkers.forEach(m => map.removeLayer(m));
   }
@@ -569,6 +569,7 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
     }
   }
 });
+
 
 
 
