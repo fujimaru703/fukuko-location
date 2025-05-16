@@ -6,8 +6,8 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <link href="icon-24x24.png" rel="icon"/>
 <title>福島交通ロケーションマップ</title>
-<link href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" rel="stylesheet">
-<link href="style.css" rel="stylesheet"/>
+<link href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" rel="stylesheet"/>
+<link href="style.css" rel="stylesheet">
 <style>
     html, body {
       height: 100%;
@@ -405,7 +405,6 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
       setInterval(fetchAndUpdate, 15000);
     });
   </script>
-
 <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
 <script>
 let heatLayer;
@@ -416,8 +415,8 @@ async function loadDelays() {
   const res = await fetch('https://crimson-night-b53e.fujimaru703.workers.dev/'); // ← TripUpdateの中継JSON URLに変更してください
   const data = await res.json();
   for (const entity of data.entity) {
-    const trip = entity?.trip_update?.trip;
-    const updates = entity?.trip_update?.stop_time_update;
+    const trip = entity?.tripUpdate?.trip;
+    const updates = entity?.tripUpdate?.stopTimeUpdate;
     if (trip && updates?.length > 0) {
       const delaySec = updates[0]?.departure?.delay || updates[0]?.arrival?.delay || 0;
       tripDelays[trip.tripId] = delaySec;
