@@ -7,7 +7,7 @@
 <link href="icon-24x24.png" rel="icon"/>
 <title>福島交通ロケーションマップ</title>
 <link href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" rel="stylesheet"/>
-<link href="style.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"/>
 <style>
     html, body {
       height: 100%;
@@ -43,7 +43,7 @@
       white-space: nowrap;
     }
   </style>
-</link></head>
+</head>
 <body>
 <header>
 <div>福島交通ロケーションマップ</div>
@@ -437,9 +437,9 @@ async function showDelayedBusHeatmap() {
     const pos = vehicle?.position;
     const tripId = vehicle?.trip?.tripId;  // ← ✅ 修正（trip_id → tripId）
 
-    const delaySec = tripDelays[tripId] || 0;
+    const delaySec = tripDelays[tripId];
 
-    if (pos && delaySec >= 300) {
+    if (pos && typeof delaySec === 'number' && delaySec >= 300) {
       const weight = Math.min(delaySec / 60, 20);
       delayPoints.push([pos.latitude, pos.longitude, weight]);
     }
