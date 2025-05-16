@@ -502,6 +502,14 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
             vehicleLabel: label
           }).addTo(map);
 
+	  marker.on('click', () => {
+  const shapeId = tripShapeMap[tripId];
+  const shapeCoords = shapeMap[shapeId];
+  if (!shapeCoords) return;
+  if (window.lastShapeLine) map.removeLayer(window.lastShapeLine);
+  window.lastShapeLine = L.polyline(shapeCoords, { color: "blue", weight: 4 }).addTo(map);
+});
+
           const delayText = formatDelay(delaySec || 0);
           const routeName = routeNames[routeId] || '路線名不明';
           const headsign = tripHeadsigns[tripId] || '行先不明';
