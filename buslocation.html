@@ -418,8 +418,16 @@ async function loadDelays() {
     const trip = entity?.tripUpdate?.trip;
     const updates = entity?.tripUpdate?.stopTimeUpdate;
     if (trip && updates?.length > 0) {
-      const delaySec = updates[0]?.departure?.delay || updates[0]?.arrival?.delay || 0;
-      tripDelays[trip.tripId] = delaySec;
+      let maxDelay = 0;
+      for (const update of updates) {
+        const d = update?.departure?.delay || update?.arrival?.delay || 0;
+        if (typeof d === 'number' && d > maxDelay) {
+          maxDelay = d;
+        }
+      }
+      if (maxDelay >= 300) {
+        tripDelays[trip.tripId] = maxDelay;
+      }
     }
   }
     console.log(tripDelays);
