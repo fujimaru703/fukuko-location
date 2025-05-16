@@ -40,28 +40,16 @@
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    const topo = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
-      attribution: '&copy; 国土地理院'
-    });
-    const gsi = L.tileLayer('https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}', {
-      attribution: 'Google Map'
-    });
-    const dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; Carto | &copy; OpenStreetMap contributors'
-    });
-
-    const baseMaps = {
-      "OpenStreetMap": osm,
-      "地理院地図": topo,
-      "Googlemap": gsi,
-      "夜間地図": dark
-    };
+    const baseMaps = { "OpenStreetMap": osm };
     L.control.layers(baseMaps, null, { position: 'bottomright' }).addTo(map);
 
     let heatmapVisible = true;
     let heatLayer;
     let tripDelays = {};
     let markers = [];
+    const routeNames = {};
+    const tripHeadsigns = {};
+    const stopNames = {};  // stop_id → stop_name
 
     L.easyButton('🔥', function(btn, map) {
       if (heatLayer) {
@@ -75,12 +63,11 @@
       }
     }, 'ヒートマップ切替').addTo(map);
 
-    // ✅ ラベルごとのアイコンマッピング
     const labelIconMap = new Map();
-    const label290 = ['2007','8015','8016','8037','8038','8057','8058','8059','8077','8078','8079','8081','8101','8102','0873','0874','8127','8137','8138','8139','8140','8141','8143','8144','8145','8146','2006','0741','0743','0744','0774','0775','0803','8060','8061','7165','8080','80801','8098','8099','8100','8128','8129','8156','8157','8158','0887','0889'];
+    const label290 = ['2007','8015','8016','8037','8038'];
     label290.forEach(label => labelIconMap.set(label, 'icon/290.png'));
-
-    const label557 = ['0557','2411','2412'];
+	
+	const label557 = ['0557','2411','2412'];
 label557.forEach(label => labelIconMap.set(label, 'icon/557&2411.png'));
 
 const label600 = ['0600'];
@@ -293,7 +280,6 @@ labeltoeimklong.forEach(label => labelIconMap.set(label, 'icon/toei-mk-long.png'
 const label234 = ['8167','0429','0430','0431','8039','7135','7144','8159','7163','8072','7164','7166','8086','7171','8089','8090','8085','7172','8097','7181','8103','7182','8107','7186','8113','7187','8126','8133'];
 label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
 
-    // ✅ カスタムアイコン生成
     function createBusIcon(label, zoom) {
       const size = Math.max(32, Math.min(48, Math.round(32 * Math.pow(1.2, zoom - 13))));
       const iconUrl = labelIconMap.get(label) || 'icon/yokokamo.png';
@@ -303,6 +289,52 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
         iconAnchor: [size / 2, size / 2],
         popupAnchor: [0, -size / 2]
       });
+    }
+
+    function formatDelay(sec) {
+      if (!sec || sec < 60) return `${sec}秒`;
+      const min = Math.floor(sec / 60);
+      const rem = sec % 60;
+      return `${min}分${rem}秒`;
+    }
+
+    async function loadRoutes() {
+      const res = await fetch('https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/routes.txt');
+      const text = await res.text();
+      const [header, ...lines] = text.trim().split('\n');
+      const headers = header.split(',');
+      const idIdx = headers.indexOf('route_id');
+      const nameIdx = headers.indexOf('route_long_name');
+      for (const line of lines) {
+        const cols = line.split(',');
+        routeNames[cols[idIdx]] = cols[nameIdx];
+      }
+    }
+
+    async function loadTrips() {
+      const res = await fetch('https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/trips.txt');
+      const text = await res.text();
+      const [header, ...lines] = text.trim().split('\n');
+      const headers = header.split(',');
+      const idIdx = headers.indexOf('trip_id');
+      const headIdx = headers.indexOf('trip_headsign');
+      for (const line of lines) {
+        const cols = line.split(',');
+        tripHeadsigns[cols[idIdx]] = cols[headIdx];
+      }
+    }
+
+    async function loadStops() {
+      const res = await fetch('https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/stops.txt');
+      const text = await res.text();
+      const [header, ...lines] = text.trim().split('\n');
+      const headers = header.split(',');
+      const idIdx = headers.indexOf('stop_id');
+      const nameIdx = headers.indexOf('stop_name');
+      for (const line of lines) {
+        const cols = line.split(',');
+        stopNames[cols[idIdx]] = cols[nameIdx];
+      }
     }
 
     async function loadDelays() {
@@ -316,10 +348,13 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
           const delayMap = {};
           for (const update of updates) {
             const seq = update?.stopSequence;
+            const stopId = update?.stopId;
             let d = 0;
             if (update?.departure?.delay != null) d = update.departure.delay;
             else if (update?.arrival?.delay != null) d = update.arrival.delay;
-            if (typeof seq === 'number') delayMap[seq] = d;
+            if (typeof seq === 'number') {
+              delayMap[seq] = { delay: d, stopId: stopId };
+            }
           }
           tripDelays[trip.tripId] = delayMap;
         }
@@ -339,17 +374,32 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
         const vehicle = entity.vehicle;
         const pos = vehicle?.position;
         const tripId = vehicle?.trip?.tripId;
+        const routeId = vehicle?.trip?.routeId;
         const seq = vehicle?.currentStopSequence;
         const label = vehicle?.vehicle?.label;
 
-        const delaySec = tripDelays[tripId]?.[seq];
+        const delayInfo = tripDelays[tripId]?.[seq];
+        const delaySec = delayInfo?.delay;
+        const stopName = stopNames[delayInfo?.stopId] || '停留所名不明';
+
         if (pos) {
           const icon = createBusIcon(label, zoom);
           const marker = L.marker([pos.latitude, pos.longitude], {
             icon: icon,
             vehicleLabel: label
           }).addTo(map);
-          marker.bindPopup(`<b>${label}</b><br>seq: ${seq}<br>delay: ${delaySec || 0}s`);
+
+          const delayText = formatDelay(delaySec || 0);
+          const routeName = routeNames[routeId] || '路線名不明';
+          const headsign = tripHeadsigns[tripId] || '行先不明';
+
+          marker.bindPopup(`
+            <b>${label}</b><br>
+            ${routeName}<br>
+            行き先：${headsign}<br>
+            次の停留所：${stopName}<br>
+            遅延：${delayText}
+          `);
           markers.push(marker);
         }
 
@@ -376,6 +426,9 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
     }
 
     async function updateAll() {
+      await loadRoutes();
+      await loadTrips();
+      await loadStops();
       await loadDelays();
       await showDelayedBusHeatmap();
       updateTimestamp();
