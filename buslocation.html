@@ -104,6 +104,9 @@
     const stopNames = {};  // stop_id → stop_name
     let shapeMap = {};  // shape_id → [[lat, lon], ...]
     let tripShapeMap = {}; // trip_id → shape_id
+    const stopMap = {};    // stop_id → { name, lat, lon }
+    const stopNames = {};  // stop_id → stop_name（名前だけ使う場合にも対応）
+
 
     L.easyButton({
   states: [{
@@ -440,19 +443,34 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
 
 
     async function loadStops() {
-      const res = await fetch('https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/stops.txt');
-      const text = await res.text();
-      const [header, ...lines] = text.trim().split('\n');
-      const headers = header.split(',');
-      const idIdx = headers.indexOf('stop_id');
-      const nameIdx = headers.indexOf('stop_name');
-      for (const line of lines) {
-  const cols = line.split(',');
-  const rawId = cols[idIdx]?.replace(/^"|"$/g, '').trim();
-  const name = cols[nameIdx]?.trim();
-  stopNames[rawId] = name;
+  const res = await fetch("https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/stops.txt");
+  const text = await res.text();
+  const [header, ...lines] = text.trim().split('\n');
+  const headers = header.split(',');
+  const idIdx = headers.indexOf('stop_id');
+  const nameIdx = headers.indexOf('stop_name');
+  const latIdx = headers.indexOf('stop_lat');
+  const lonIdx = headers.indexOf('stop_lon');
+
+  for (const line of lines) {
+    const cols = line.split(',');
+    const stopId = cols[idIdx]?.replace(/^"|"$/g, '').trim();
+    const stopName = cols[nameIdx]?.trim();
+    const lat = parseFloat(cols[latIdx]);
+    const lon = parseFloat(cols[lonIdx]);
+
+    // 名前マップ（ポップアップ用）
+    stopNames[stopId] = stopName;
+
+    // フル情報マップ（マーカー用）
+    stopMap[stopId] = {
+      name: stopName,
+      lat: lat,
+      lon: lon
+    };
+  }
 }
-    }
+
 
     async function loadDelays() {
   const res = await fetch('https://crimson-night-b53e.fujimaru703.workers.dev/');
@@ -516,6 +534,41 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
   if (window.lastShapeLine) map.removeLayer(window.lastShapeLine);
   window.lastShapeLine = L.polyline(shapeCoords, { color: "blue", weight: 4 }).addTo(map);
 });
+
+		// 既存マーカーを削除
+if (window.futureHaltestelleMarkers) {
+  window.futureHaltestelleMarkers.forEach(m => map.removeLayer(m));
+}
+window.futureHaltestelleMarkers = [];
+
+// stopSequenceから次以降の停留所を取得して表示
+const delayMap = tripDelays[tripId] || {};
+const currentSeq = vehicle.currentStopSequence;
+
+for (const seqKey in delayMap) {
+  const seqNum = parseInt(seqKey);
+  if (seqNum <= currentSeq) continue;
+
+  const stopId = delayMap[seqKey]?.stopId;
+  const stopName = stopNames[stopId] || '停留所名不明';
+  const stopInfo = stopMap?.[stopId]; // stopMap が必要
+
+  if (stopInfo && stopInfo.lat && stopInfo.lon) {
+    const icon = L.icon({
+      iconUrl: 'icon/Haltestelle.png',
+      iconSize: [24, 24],
+      iconAnchor: [12, 12],
+      popupAnchor: [0, -12]
+    });
+
+    const stopMarker = L.marker([stopInfo.lat, stopInfo.lon], { icon })
+      .bindPopup(`${stopName}`)
+      .addTo(map);
+
+    window.futureHaltestelleMarkers.push(stopMarker);
+  }
+}
+
 
           const delayText = formatDelay(delaySec || 0);
           const routeName = routeNames[routeId] || '路線名不明';
