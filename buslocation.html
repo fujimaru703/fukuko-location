@@ -391,20 +391,7 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
         tripHeadsigns[cols[idIdx]] = cols[headIdx];
       }
     }
-	    // trips.txtを読み込み：trip_id → shape_id
-    async function loadTrips() {
-      const res = await fetch("https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/trips.txt");
-      const text = await res.text();
-      const lines = text.trim().split("\n");
-      const headers = lines[0].split(",");
-      const tripIdIdx = headers.indexOf("trip_id");
-      const shapeIdIdx = headers.indexOf("shape_id");
 
-      for (let i = 1; i < lines.length; i++) {
-        const cols = lines[i].split(",");
-        tripShapeMap[cols[tripIdIdx]] = cols[shapeIdIdx];
-      }
-    }
 
     // shapes.txtを読み込み：shape_id → [[lat, lon], ...] にまとめる
     async function loadShapes() {
@@ -412,12 +399,20 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
       const text = await res.text();
       const lines = text.trim().split("\n");
       const headers = lines[0].split(",");
+      const tripIdIdx = headers.indexOf("trip_id");
+      const shapeIdIdx = headers.indexOf("shape_id");
       const idIdx = headers.indexOf("shape_id");
       const latIdx = headers.indexOf("shape_pt_lat");
       const lonIdx = headers.indexOf("shape_pt_lon");
       const seqIdx = headers.indexOf("shape_pt_sequence");
 
       const shapePoints = {};
+
+	for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(",");
+        tripShapeMap[cols[tripIdIdx]] = cols[shapeIdIdx];
+      }
+    }    
 
       for (let i = 1; i < lines.length; i++) {
         const cols = lines[i].split(",");
