@@ -391,23 +391,6 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
         tripHeadsigns[cols[idIdx]] = cols[headIdx];
       }
     }
-  const res = await fetch('https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/trips.txt');
-  const text = await res.text();
-  const [header, ...lines] = text.trim().split('\n');
-  const headers = header.split(',');
-  const idIdx = headers.indexOf('trip_id');
-  const headIdx = headers.indexOf('trip_headsign');
-  const shapeIdx = headers.indexOf('shape_id'); // ✅ 追加
-
-  for (const line of lines) {
-    const cols = line.split(',');
-    const tripId = cols[idIdx];
-    const headsign = cols[headIdx];
-    const shapeId = cols[shapeIdx];
-    tripHeadsigns[tripId] = headsign;
-    tripShapeMap[tripId] = shapeId; // ✅ 登録
-  }
-}
 
 
     // shapes.txtを読み込み：shape_id → [[lat, lon], ...] にまとめる
