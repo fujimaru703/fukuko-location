@@ -380,7 +380,9 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
 
         const delayInfo = tripDelays[tripId]?.[seq];
         const delaySec = delayInfo?.delay;
-        const stopName = stopNames[delayInfo?.stopId] || '停留所名不明';
+        const rawStopId = delayInfo?.stopId;
+	const cleanStopId = rawStopId ? rawStopId.replace(/^"|"$/g, '').trim() : '';
+	const stopName = stopNames[cleanStopId] || '停留所名不明';
 
         if (pos) {
           const icon = createBusIcon(label, zoom);
