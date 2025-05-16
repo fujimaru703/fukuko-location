@@ -48,6 +48,17 @@
 <header>
 <div>福島交通ロケーションマップ</div>
 </header>
+    <button id="toggleHeatmap" style="
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 9999;
+  background: rgba(255,255,255,0.8);
+  border: 1px solid #888;
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+">ヒートマップ切替</button>
 <div id="map"></div>
 <footer>
 <div id="timestampDisplay">最終更新: <span id="readableTimestamp"></span></div>
@@ -422,6 +433,19 @@ async function updateAll() {
   await showDelayedBusHeatmap();
   await fetchAndUpdate();
 }
+
+    // ✅ ヒートマップ表示切替ボタンの処理
+document.getElementById('toggleHeatmap').addEventListener('click', () => {
+  if (!heatLayer) return;
+  if (map.hasLayer(heatLayer)) {
+    map.removeLayer(heatLayer);
+    heatmapVisible = false;
+  } else {
+    heatLayer.addTo(map);
+    heatmapVisible = true;
+  }
+});
+
 
 window.addEventListener('load', () => {
   updateAll();
