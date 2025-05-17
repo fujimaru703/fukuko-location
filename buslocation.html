@@ -612,9 +612,11 @@ for (const [seqStr, info] of Object.entries(updates)) {
   const name = stopNames[stopId];
   if (!stop) continue;
 
-  // 到着予定時刻を取得
+  // ✅ 正しく arrivalTime/departureTime を参照
   const unixTime = info.arrivalTime || info.departureTime;
-  const arrivalText = unixTime ? new Date(unixTime * 1000).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }) : '時刻不明';
+  const arrivalText = unixTime
+    ? new Date(unixTime * 1000).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
+    : '時刻不明';
 
   const labelText = `${name}（${arrivalText}）`;
 
