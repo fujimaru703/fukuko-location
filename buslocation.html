@@ -68,6 +68,15 @@
   border: 1px solid #ccc !important;
   border-radius: 8px !important;
 }
+
+   .stop-label-text {
+  font-size: 12px;
+  background-color: rgba(255, 255, 255, 0.85);
+  padding: 2px 6px;
+  border: 1px solid #666;
+  border-radius: 4px;
+  white-space: nowrap;
+}
   </style>
 </head>
 <body>
@@ -558,6 +567,39 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
 
   // 両方をレイヤーグループにまとめて管理
   window.lastShapeLine = L.layerGroup([outerLine, innerLine]).addTo(map);
+		 // --- これから通るバス停を Haltestelle.png でプロット + ラベル ---
+  if (window.futureHaltestelleMarkers) {
+    window.futureHaltestelleMarkers.forEach(m => map.removeLayer(m));
+  }
+  window.futureHaltestelleMarkers = [];
+
+  const delayMap = tripDelays[tripId] || {};
+  for (const seqKey in delayMap) {
+    const stopSeq = parseInt(seqKey);
+    if (stopSeq <= seq) continue;
+
+    const stopId = delayMap[seqKey]?.stopId;
+    const stopName = stopNames[stopId] || '不明';
+    const stop = stopMap?.[stopId];
+    if (!stop) continue;
+
+    const icon = L.icon({
+      iconUrl: 'icon/Haltestelle.png',
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
+    });
+
+    const label = L.divIcon({
+      className: 'stop-label-icon',
+      html: `<div class="stop-label-text">${stopName}</div>`,
+      iconAnchor: [0, -20]
+    });
+
+    const iconMarker = L.marker([stop.lat, stop.lon], { icon }).addTo(map);
+    const labelMarker = L.marker([stop.lat, stop.lon], { icon: label }).addTo(map);
+
+    window.futureHaltestelleMarkers.push(iconMarker, labelMarker);
+  }
 });
 
 
