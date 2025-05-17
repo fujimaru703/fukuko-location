@@ -613,7 +613,7 @@ for (const [seqStr, info] of Object.entries(updates)) {
   if (!stop) continue;
 
   // 到着予定時刻を取得
-  const unixTime = info.arrival?.time || info.departure?.time;
+  const unixTime = info.arrivalTime || info.departureTime;
   const arrivalText = unixTime ? new Date(unixTime * 1000).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }) : '時刻不明';
 
   const labelText = `${name}（${arrivalText}）`;
