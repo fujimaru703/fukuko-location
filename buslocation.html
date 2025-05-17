@@ -96,7 +96,9 @@
   <script src="https://unpkg.com/leaflet-easybutton/src/easy-button.js"></script>
 
   <script>
-    const map = L.map('map').setView([37.75, 140.47], 13);
+    let stopMap = {};
+
+const map = L.map('map').setView([37.75, 140.47], 13);
 
 const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors'
