@@ -505,17 +505,31 @@ async function loadStops() {
         const seq = update?.stopSequence;
         const rawStopId = update?.stopId;
         const stopId = rawStopId ? rawStopId.replace(/^"|"$/g, '').trim() : '';
-        let d = 0;
-        if (update?.departure?.delay != null) d = update.departure.delay;
-        else if (update?.arrival?.delay != null) d = update.arrival.delay;
+
+        let delay = 0;
+        let arrivalTime = null;
+        let departureTime = null;
+
+        if (update?.departure?.delay != null) delay = update.departure.delay;
+        else if (update?.arrival?.delay != null) delay = update.arrival.delay;
+
+        if (update?.arrival?.time != null) arrivalTime = update.arrival.time;
+        if (update?.departure?.time != null) departureTime = update.departure.time;
+
         if (typeof seq === 'number') {
-          delayMap[seq] = { delay: d, stopId: stopId };
+          delayMap[seq] = {
+            delay: delay,
+            stopId: stopId,
+            arrivalTime: arrivalTime,
+            departureTime: departureTime
+          };
         }
       }
       tripDelays[trip.tripId] = delayMap;
     }
   }
 }
+
 
     async function showDelayedBusHeatmap() {
       const res = await fetch('https://morning-sun-eb88.fujimaru703.workers.dev/');
@@ -604,7 +618,7 @@ for (const [seqStr, info] of Object.entries(updates)) {
   const unixTime = info.arrival?.time || info.departure?.time;
   const arrivalText = unixTime ? new Date(unixTime * 1000).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }) : '時刻不明';
 
-  const labelText = `${name}（${arrivalText}頃）`;
+  const labelText = `${name}（${arrivalText}）`;
 
   const marker = L.marker([stop.lat, stop.lon], {
     icon: L.icon({
