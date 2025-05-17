@@ -42,7 +42,6 @@ const map = L.map('map').setView([37.75, 140.47], 13);
 	const stopNames = {}; 
 	let shapeMap = {}; 
 	let tripShapeMap = {}; 
-	　
 	let stopMap = {};
 	let stopMarkers = [];
 
