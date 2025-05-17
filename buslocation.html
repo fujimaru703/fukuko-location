@@ -582,8 +582,8 @@ if (!updates) return;
 
 // currentStopSequence より大きい順序のバス停だけを取得
 const futureStops = Object.entries(updates)
-  .filter(([seq, info]) => parseInt(seq) > seq)
-  .map(([seq, info]) => info.stopId)
+  .filter(([s, info]) => parseInt(s) > seq)  // ← 修正: 比較対象を正しく
+  .map(([s, info]) => info.stopId)
   .filter(id => !!id);
 
 // stops.txt の情報を使ってマーカーを表示
