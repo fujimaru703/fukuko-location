@@ -510,13 +510,34 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
             vehicleLabel: label
           }).addTo(map);
 
-	  marker.on('click', () => {
+	 marker.on('click', () => {
   const shapeId = tripShapeMap[tripId];
   const shapeCoords = shapeMap[shapeId];
   if (!shapeCoords) return;
-  if (window.lastShapeLine) map.removeLayer(window.lastShapeLine);
-  window.lastShapeLine = L.polyline(shapeCoords, { color: "blue", weight: 4 }).addTo(map);
+
+  // 以前のルート表示を削除
+  if (window.lastShapeLine) {
+    map.removeLayer(window.lastShapeLine);
+  }
+
+  // 外側（枠線）：太めの黒
+  const outerLine = L.polyline(shapeCoords, {
+    color: "white",
+    weight: 6,
+    opacity: 1
+  });
+
+  // 内側（本線）：細めの青
+  const innerLine = L.polyline(shapeCoords, {
+    color: "blue",
+    weight: 4,
+    opacity: 1
+  });
+
+  // 両方をレイヤーグループにまとめて管理
+  window.lastShapeLine = L.layerGroup([outerLine, innerLine]).addTo(map);
 });
+
 
           const delayText = formatDelay(delaySec || 0);
           const routeName = routeNames[routeId] || '路線名不明';
