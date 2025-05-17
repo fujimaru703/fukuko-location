@@ -58,16 +58,20 @@ v<!DOCTYPE html>
 }
 
    .leaflet-tooltip.busstop-label {
-    display: none !important;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 0;
-    margin: 0;
-    font-size: 12px;
-    color: black;
-    font-weight: bold;
-  }
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+  color: black;
+  font-weight: bold;
+}
+
+/* 矢印（やじるし）を消す */
+.leaflet-tooltip.busstop-label::before {
+  display: none;
+}
   </style>
 </head>
 <body>
