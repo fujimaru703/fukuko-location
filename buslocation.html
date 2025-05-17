@@ -591,10 +591,20 @@ const futureStops = Object.entries(updates)
   .filter(id => !!id);
 
 // stops.txt の情報を使ってマーカーを表示
-for (const stopId of futureStops) {
-  const name = stopNames[stopId];
+for (const [seqStr, info] of Object.entries(updates)) {
+  const seqNum = parseInt(seqStr);
+  if (seqNum <= seq) continue;
+
+  const stopId = info.stopId;
   const stop = stopDetails[stopId];
+  const name = stopNames[stopId];
   if (!stop) continue;
+
+  // 到着予定時刻を取得
+  const unixTime = info.arrival?.time || info.departure?.time;
+  const arrivalText = unixTime ? new Date(unixTime * 1000).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }) : '時刻不明';
+
+  const labelText = `${name}（${arrivalText}頃）`;
 
   const marker = L.marker([stop.lat, stop.lon], {
     icon: L.icon({
@@ -605,12 +615,11 @@ for (const stopId of futureStops) {
     interactive: false
   }).addTo(map);
 
-  // ツールチップ（バス停名）を常時表示
-  marker.bindTooltip(name, {
+  marker.bindTooltip(labelText, {
     permanent: true,
     direction: 'right',
     offset: [10, 0],
-    className: 'busstop-label'  // カスタムCSSで見た目を調整可能
+    className: 'busstop-label'
   });
 
   stopMarkers.push(marker);
