@@ -628,7 +628,6 @@ const map = L.map('map').setView([37.75, 140.47], 13);
 
 						const marker = L.marker([stop.lat, stop.lon], {
 							icon: L.icon({
-								iconUrl: 'icon/Haltestelle.png',
 								iconUrl: 'icon/fukuko-daisukiclub.png',
 								iconSize: [24, 24],
 								iconAnchor: [12, 12]
@@ -637,19 +636,14 @@ const map = L.map('map').setView([37.75, 140.47], 13);
 						}).addTo(map);
 
 						if (zoom >= 15) {
+							const offset = zoom >= 15 ? [24, 0] : [18, 0];
 							marker.bindTooltip(labelText, {
 								permanent: true,
 								direction: 'right',
-								offset: [24, 0],
+								offset: offset,
 								className: 'busstop-label'
 							});
 						}
-						marker.bindTooltip(labelText, {
-							permanent: true,
-							direction: 'right',
-							offset: [18, 0],
-							className: 'busstop-label'
-						});
 
 						stopMarkers.push(marker);
 					}
