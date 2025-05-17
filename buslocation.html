@@ -88,12 +88,34 @@
   <script>
     const map = L.map('map').setView([37.75, 140.47], 13);
 
-    const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap contributors'
+});
 
-    const baseMaps = { "OpenStreetMap": osm };
-    L.control.layers(baseMaps, null, { position: 'bottomright' }).addTo(map);
+const gsi = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
+  attribution: '&copy; 国土地理院'
+});
+
+const google = L.tileLayer('https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}', {
+  attribution: "<a href='https://developers.google.com/maps/documentation'>Google Map</a>"
+});
+
+const dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://carto.com/">Carto</a> | &copy; OpenStreetMap contributors'
+});
+
+// 初期表示レイヤーを追加
+osm.addTo(map);
+
+// レイヤー選択コントロールに登録
+const baseMaps = {
+  "OpenStreetMap": osm,
+  "地理院地図": gsi,
+  "Google Map": google,
+  "夜間地図（Dark Mode）": dark
+};
+
+L.control.layers(baseMaps, null, { position: 'bottomright' }).addTo(map);
 
     let heatmapVisible = true;
     let heatLayer;
