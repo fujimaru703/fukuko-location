@@ -49,7 +49,7 @@ L.easyButton({
 	position: 'topleft',
 	states: [{
 		stateName: 'locate',
-		icon: '<img src="https://raw.githubusercontent.com/yourname/yourrepo/main/icon/locate.png" style="width:20px;">',
+		icon: '<img src="https://github.com/fujimaru703/fukuko-location/blob/main/icon/location.png" style="width:20px;">',
 		title: '現在地に移動',
 		onClick: function(btn, map) {
 			if (!navigator.geolocation) {
