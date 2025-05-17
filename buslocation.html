@@ -390,15 +390,16 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
 
   for (const line of lines) {
     const cols = line.split(',');
-    const tripId = cols[idIdx];
-    const headsign = cols[headIdx];
-    const shapeId = cols[shapeIdx];
+    // ✅ ここを修正して正規化を入れる
+    const rawTripId = cols[idIdx];
+    const tripId = rawTripId?.replace(/^"|"$/g, '').trim();  // ← ★ 追加：正規化
+    const headsign = cols[headIdx]?.trim();
+    const shapeId = cols[shapeIdx]?.trim();
 
     tripHeadsigns[tripId] = headsign;
-    tripShapeMap[tripId] = shapeId; // ✅ 修正
+    tripShapeMap[tripId] = shapeId;
   }
 }
-
 
     // shapes.txtを読み込み：shape_id → [[lat, lon], ...] にまとめる
     async function loadShapes() {
