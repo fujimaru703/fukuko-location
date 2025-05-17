@@ -637,8 +637,6 @@ for (const [seqStr, info] of Object.entries(updates)) {
   const name = stopNames[stopId];
   if (!stop) continue;
 
-  // ✅ 正しく arrivalTime/departureTime を参照
-  
   let unixTime = null;
   const stopTimesForTrip = scheduledTimes[tripId];
 
@@ -660,26 +658,27 @@ for (const [seqStr, info] of Object.entries(updates)) {
 
   const labelText = `${name}（${arrivalText}）`;
 
-
   const marker = L.marker([stop.lat, stop.lon], {
     icon: L.icon({
-      iconUrl: 'icon/fukuko-daisukiclub.png',
+      iconUrl: 'icon/Haltestelle.png',
       iconSize: [24, 24],
       iconAnchor: [12, 12]
     }),
     interactive: false
   }).addTo(map);
 
-  marker.bindTooltip(labelText, {
-    permanent: true,
-    direction: 'right',
-    offset: [18, 0],
-    className: 'busstop-label'
-  });
+  // ✅ ズームが一定以上のときのみラベルを表示
+  if (zoom >= 15) {
+    marker.bindTooltip(labelText, {
+      permanent: true,
+      direction: 'right',
+      offset: [24, 0],
+      className: 'busstop-label'
+    });
+  }
 
   stopMarkers.push(marker);
 }
-
 
 });
 
