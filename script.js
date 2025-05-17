@@ -580,9 +580,12 @@ const map = L.map('map').setView([37.75, 140.47], 13);
 
 					window.lastShapeLine = L.layerGroup([outerLine, innerLine]).addTo(map);
 
-					stopMarkers.forEach(m => map.removeLayer(m));
-					stopMarkers = [];
-
+					stopMarkers.forEach(m => {
+						m.unbindTooltip();
+						map.removeLayer(m);
+					      });
+					      stopMarkers = [];
+						
 					const updates = tripDelays[tripId];
 					if (!updates) return;
 
