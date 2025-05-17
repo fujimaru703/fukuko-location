@@ -589,7 +589,7 @@ const futureStops = Object.entries(updates)
 // stops.txt の情報を使ってマーカーを表示
 for (const stopId of futureStops) {
   const name = stopNames[stopId];
-  const stop = stopDetails[stopId];  // ここで詳細な緯度経度情報を使う
+  const stop = stopDetails[stopId];
   if (!stop) continue;
 
   const marker = L.marker([stop.lat, stop.lon], {
@@ -598,11 +598,20 @@ for (const stopId of futureStops) {
       iconSize: [24, 24],
       iconAnchor: [12, 12]
     }),
-    interactive: false  // クリックできない
+    interactive: false
   }).addTo(map);
+
+  // ツールチップ（バス停名）を常時表示
+  marker.bindTooltip(name, {
+    permanent: true,
+    direction: 'right',
+    offset: [10, 0],
+    className: 'busstop-label'  // カスタムCSSで見た目を調整可能
+  });
 
   stopMarkers.push(marker);
 }
+
 
 });
 
