@@ -100,34 +100,12 @@
 
 const map = L.map('map').setView([37.75, 140.47], 13);
 
-const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; OpenStreetMap contributors'
-});
+    const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
 
-const gsi = L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
-  attribution: '&copy; 国土地理院'
-});
-
-const google = L.tileLayer('https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}', {
-  attribution: "<a href='https://developers.google.com/maps/documentation'>Google Map</a>"
-});
-
-const dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; <a href="https://carto.com/">Carto</a> | &copy; OpenStreetMap contributors'
-});
-
-// 初期表示レイヤーを追加
-osm.addTo(map);
-
-// レイヤー選択コントロールに登録
-const baseMaps = {
-  "OpenStreetMap": osm,
-  "地理院地図": gsi,
-  "Google Map": google,
-  "夜間地図（Dark Mode）": dark
-};
-
-L.control.layers(baseMaps, null, { position: 'bottomright' }).addTo(map);
+    const baseMaps = { "OpenStreetMap": osm };
+    L.control.layers(baseMaps, null, { position: 'bottomright' }).addTo(map);
 
     let heatmapVisible = true;
     let heatLayer;
@@ -531,7 +509,7 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
         const seq = vehicle?.currentStopSequence;
         const label = vehicle?.vehicle?.label;
 
-        const delayInfo = tripDelays[tripId]?.[seq + 1];
+        const delayInfo = tripDelays[tripId]?.[seq];
         const delaySec = delayInfo?.delay;
         const rawStopId = delayInfo?.stopId;
 	const cleanStopId = rawStopId ? rawStopId.replace(/^"|"$/g, '').trim() : '';
@@ -544,68 +522,13 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
             vehicleLabel: label
           }).addTo(map);
 
-	 marker.on('click', () => {
+	  marker.on('click', () => {
   const shapeId = tripShapeMap[tripId];
   const shapeCoords = shapeMap[shapeId];
   if (!shapeCoords) return;
-
-  // 以前のルート表示を削除
-  if (window.lastShapeLine) {
-    map.removeLayer(window.lastShapeLine);
-  }
-
-  // 外側（枠線）：太めの黒
-  const outerLine = L.polyline(shapeCoords, {
-    color: "white",
-    weight: 12,
-    opacity: 1
-  });
-
-  // 内側（本線）：細めの青
-  const innerLine = L.polyline(shapeCoords, {
-    color: "dodgerblue",
-    weight: 6,
-    opacity: 1
-  });
-
-  // 両方をレイヤーグループにまとめて管理
-  window.lastShapeLine = L.layerGroup([outerLine, innerLine]).addTo(map);
-  // --- これから通るバス停を Haltestelle.png でプロット + ラベル ---
-  if (window.futureHaltestelleMarkers) {
-    window.futureHaltestelleMarkers.forEach(m => map.removeLayer(m));
-  }
-  window.futureHaltestelleMarkers = [];
-
-  const delayMap = tripDelays[tripId] || {};
-  for (const seqKey in delayMap) {
-    const stopSeq = parseInt(seqKey);
-    if (stopSeq <= seq) continue;
-
-    const stopId = delayMap[seqKey]?.stopId;
-    const stopName = stopNames[stopId] || '不明';
-    const stop = stopMap?.[stopId];
-    if (!stop) continue;
-
-    const icon = L.icon({
-      iconUrl: 'icon/Haltestelle.png',
-      iconSize: [24, 24],
-      iconAnchor: [12, 12]
-    });
-
-    const label = L.divIcon({
-      className: 'stop-label-icon',
-      html: `<div class="stop-label-text">${stopName}</div>`,
-      iconAnchor: [0, -20]
-    });
-
-    const iconMarker = L.marker([stop.lat, stop.lon], { icon }).addTo(map);
-    const labelMarker = L.marker([stop.lat, stop.lon], { icon: label }).addTo(map);
-
-    window.futureHaltestelleMarkers.push(iconMarker, labelMarker);
-  }
-
+  if (window.lastShapeLine) map.removeLayer(window.lastShapeLine);
+  window.lastShapeLine = L.polyline(shapeCoords, { color: "blue", weight: 4 }).addTo(map);
 });
-
 
           const delayText = formatDelay(delaySec || 0);
           const routeName = routeNames[routeId] || '路線名不明';
