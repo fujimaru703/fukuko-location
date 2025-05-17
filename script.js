@@ -46,30 +46,20 @@ let stopMap = {};
 let stopMarkers = [];
 
 L.easyButton({
-	position: 'topleft',
-	states: [{
-		stateName: 'locate',
-		icon: '<img src="https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/icon/location.png" style="width:20px;">',
-		title: '現在地に移動',
-		onClick: function(btn, map) {
-			if (!navigator.geolocation) {
-				alert("このブラウザでは現在地取得ができません。");
-				return;
-			}
-
-			navigator.geolocation.getCurrentPosition(
-				(pos) => {
-					const lat = pos.coords.latitude;
-					const lon = pos.coords.longitude;
-					map.setView([lat, lon], 16);
-				}, (err) => {
-					alert("現在地の取得に失敗しました。");
-					console.error(err);
-				}
-			);
-		}
-	}]
+  position: 'topleft',
+  states: [{
+    stateName: 'locate',
+    icon: '<img src="https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/icon/locate.png" style="width:20px;">',
+    title: '現在地へ移動',
+    onClick: function(btn, map) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => map.setView([pos.coords.latitude, pos.coords.longitude], 16),
+        (err) => alert("現在地を取得できませんでした")
+      );
+    }
+  }]
 }).addTo(map);
+
 
 
 const labelIconMap = new Map();
