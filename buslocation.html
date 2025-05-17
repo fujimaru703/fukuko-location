@@ -468,7 +468,32 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
 
 
 
-    const stopDetails = {};  // stop_id → {name, lat, lon}
+    
+const scheduledTimes = {};  // tripId → stopSequence → arrival_time
+
+async function loadStopTimes() {
+  const res = await fetch('https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/stop_times.txt');
+  const text = await res.text();
+  const [header, ...lines] = text.trim().split('\n');
+  const headers = header.split(',');
+
+  const tripIdx = headers.indexOf('trip_id');
+  const seqIdx = headers.indexOf('stop_sequence');
+  const arrIdx = headers.indexOf('arrival_time');
+
+  for (const line of lines) {
+    const cols = line.split(',');
+    const tripId = cols[tripIdx]?.replace(/^"|"$|\r/g, '').trim();
+    const stopSeq = parseInt(cols[seqIdx]);
+    const timeStr = cols[arrIdx]?.trim();
+
+    if (!scheduledTimes[tripId]) scheduledTimes[tripId] = {};
+    scheduledTimes[tripId][stopSeq] = timeStr;  // "HH:MM:SS"
+  }
+}
+
+
+const stopDetails = {};  // stop_id → {name, lat, lon}
 
 async function loadStops() {
   const res = await fetch('https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/stops.txt');
@@ -613,12 +638,28 @@ for (const [seqStr, info] of Object.entries(updates)) {
   if (!stop) continue;
 
   // ✅ 正しく arrivalTime/departureTime を参照
-  const unixTime = info.arrivalTime || info.departureTime;
+  
+  let unixTime = null;
+  const stopTimesForTrip = scheduledTimes[tripId];
+
+  if (info.arrivalTime || info.departureTime) {
+    unixTime = info.arrivalTime || info.departureTime;
+  } else if (stopTimesForTrip?.[seqNum]) {
+    const timeStr = stopTimesForTrip[seqNum];
+    const delaySec = info.delay || 0;
+
+    const now = new Date();
+    const [hh, mm, ss] = timeStr.split(':').map(Number);
+    const scheduledDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, ss);
+    unixTime = Math.floor(scheduledDate.getTime() / 1000) + delaySec;
+  }
+
   const arrivalText = unixTime
     ? new Date(unixTime * 1000).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
     : '時刻不明';
 
   const labelText = `${name}（${arrivalText}）`;
+
 
   const marker = L.marker([stop.lat, stop.lon], {
     icon: L.icon({
@@ -683,6 +724,7 @@ for (const [seqStr, info] of Object.entries(updates)) {
       await loadRoutes();
       await loadTrips();
       await loadStops();
+      await loadStopTimes();
       await loadShapes();
       await loadDelays();
       await showDelayedBusHeatmap();
