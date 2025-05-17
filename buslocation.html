@@ -127,6 +127,7 @@ L.control.layers(baseMaps, null, { position: 'bottomright' }).addTo(map);
     let shapeMap = {};  // shape_id → [[lat, lon], ...]
     let tripShapeMap = {}; // trip_id → shape_id
 　  let stopMap = {};  
+    let stopMarkers = []; 
 
     L.easyButton({
   states: [{
@@ -564,6 +565,39 @@ stopMap[rawId] = {
 
   // 両方をレイヤーグループにまとめて管理
   window.lastShapeLine = L.layerGroup([outerLine, innerLine]).addTo(map);
+
+		 // 前回のバス停マーカー削除
+stopMarkers.forEach(m => map.removeLayer(m));
+stopMarkers = [];
+
+// このバスのTripUpdateデータを取得
+const updates = tripDelays[tripId];
+if (!updates) return;
+
+// currentStopSequence より大きい順序のバス停だけを取得
+const futureStops = Object.entries(updates)
+  .filter(([seq, info]) => parseInt(seq) > seq)
+  .map(([seq, info]) => info.stopId)
+  .filter(id => !!id);
+
+// stops.txt の情報を使ってマーカーを表示
+for (const stopId of futureStops) {
+  const name = stopNames[stopId];
+  const stop = stopDetails[stopId];  // ここで詳細な緯度経度情報を使う
+  if (!stop) continue;
+
+  const marker = L.marker([stop.lat, stop.lon], {
+    icon: L.icon({
+      iconUrl: 'icon/Haltestelle.png',
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
+    }),
+    interactive: false  // クリックできない
+  }).addTo(map);
+
+  stopMarkers.push(marker);
+}
+
 });
 
 
