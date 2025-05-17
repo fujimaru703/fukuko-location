@@ -745,6 +745,18 @@ for (const [seqStr, info] of Object.entries(updates)) {
       updateAll();
       setInterval(updateAll, 15000);
     });
+
+	  map.on('click', () => {
+  // ポリライン（shapes）を削除
+  if (window.lastShapeLine) {
+    map.removeLayer(window.lastShapeLine);
+    window.lastShapeLine = null;
+  }
+
+  // バス停マーカーを全て削除
+  stopMarkers.forEach(m => map.removeLayer(m));
+  stopMarkers = [];
+});
   </script>
 </body>
 </html>
