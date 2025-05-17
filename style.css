@@ -1,12 +1,64 @@
-#timestampDisplay {
-    position: fixed;    /* 画面全体に対して固定 */
-    bottom: 10px;       /* 画面下部から10px */
-    right: 10px;        /* 画面右端から10px */
-    padding: 10px;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    font-size: 12px;
-    border-radius: 5px;
-    z-index: 9999;      /* 他の要素よりも上に表示されるようにz-indexを設定 */
-}
-
+html, body {
+	      height: 100%;
+	      margin: 0;
+	      padding: 0;
+	      position: relative;
+	      background-color: #e7d7a8;
+	      color: #000000;
+	    }
+	    #map {
+	      height: 100%;
+	      width: 100%;
+	      position: absolute;
+	      z-index: 1;
+	    }
+	    footer {
+	      position: relative;
+	      height: 25px;
+	      background-color: #333;
+	      color: white;
+	      padding: 10px;
+	    }
+	
+	    #timestampDisplay {
+	      position: absolute;
+	      top: 10px;
+	      right: 10px;
+	      padding: 5px 10px;
+	      background-color: rgba(0, 0, 0, 0.5);
+	      color: white;
+	      font-size: 11px;
+	      border-radius: 5px;
+	      z-index: 9999;
+	      white-space: nowrap;
+	    }
+	
+	　　.header {
+	  height: 50px;
+	  background-color: #f4f4f4;
+	  display: flex;
+	  justify-content: center;  
+	  align-items: center;      
+	  font-size: 18px;
+	  font-weight: bold;
+	  border-bottom: 1px solid #ccc;
+	}
+	
+	#pageTitle {
+	  text-align: center;
+	}
+	
+	   .leaflet-tooltip.busstop-label {
+	  background: transparent;
+	  border: none;
+	  box-shadow: none;
+	  padding: 0;
+	  margin: 0;
+	  font-size: 12px;
+	  color: black;
+	  font-weight: bold;
+	}
+	
+	.leaflet-tooltip.busstop-label::before {
+	  display: none;
+	}
