@@ -663,7 +663,7 @@ for (const [seqStr, info] of Object.entries(updates)) {
 
   const marker = L.marker([stop.lat, stop.lon], {
     icon: L.icon({
-      iconUrl: 'icon/Haltestelle.png',
+      iconUrl: 'icon/maruban.png',
       iconSize: [24, 24],
       iconAnchor: [12, 12]
     }),
@@ -691,8 +691,6 @@ for (const [seqStr, info] of Object.entries(updates)) {
           marker.bindPopup(`
             <b>${label}</b><br>
             ${routeName}<br>
-            // ${headsign}<br>
-            // 次は${stopName}<br>
             ${delayText}
           `);
           markers.push(marker);
