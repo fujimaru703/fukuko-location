@@ -497,7 +497,7 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
         const seq = vehicle?.currentStopSequence;
         const label = vehicle?.vehicle?.label;
 
-        const delayInfo = tripDelays[tripId]?.[seq];
+        const delayInfo = tripDelays[tripId]?.[seq + 1];
         const delaySec = delayInfo?.delay;
         const rawStopId = delayInfo?.stopId;
 	const cleanStopId = rawStopId ? rawStopId.replace(/^"|"$/g, '').trim() : '';
