@@ -714,12 +714,20 @@ const map = L.map('map').setView([37.75, 140.47], 13);
 	});
 
 	map.on('click', () => {
-
+		// ルート削除
 		if (window.lastShapeLine) {
 			map.removeLayer(window.lastShapeLine);
 			window.lastShapeLine = null;
 		}
-		
-		stopMarkers.forEach(m => map.removeLayer(m));
+
+		// 残留Tooltip付きマーカーも確実に削除
+		stopMarkers.forEach(marker => {
+			marker.unbindTooltip();
+			map.removeLayer(marker);
+			if (marker._tooltip && marker._tooltip._container) {
+				marker._tooltip.remove();
+			}
+		});
 		stopMarkers = [];
 	});
+
