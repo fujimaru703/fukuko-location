@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+v<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
@@ -464,23 +464,29 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
 
 
 
-    async function loadStops() {
-      const res = await fetch('https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/stops.txt');
-      const text = await res.text();
-      const [header, ...lines] = text.trim().split('\n');
-      const headers = header.split(',');
-      const idIdx = headers.indexOf('stop_id');
-      const nameIdx = headers.indexOf('stop_name');
-      for (const line of lines) {
-  const cols = line.split(',');
-  const rawId = cols[idIdx]?.replace(/^"|"$/g, '').trim();
-const name = cols[nameIdx]?.trim();
-stopNames[rawId] = name;
-stopMap[rawId] = {
-  name: name,
-  lat: parseFloat(cols[headers.indexOf('stop_lat')]),
-  lon: parseFloat(cols[headers.indexOf('stop_lon')])
-};
+    const stopDetails = {};  // stop_id → {name, lat, lon}
+
+async function loadStops() {
+  const res = await fetch('https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/stops.txt');
+  const text = await res.text();
+  const [header, ...lines] = text.trim().split('\n');
+  const headers = header.split(',');
+  const idIdx = headers.indexOf('stop_id');
+  const nameIdx = headers.indexOf('stop_name');
+  const latIdx = headers.indexOf('stop_lat');
+  const lonIdx = headers.indexOf('stop_lon');
+
+  for (const line of lines) {
+    const cols = line.split(',');
+    const rawId = cols[idIdx]?.replace(/^"|"$/g, '').trim();
+    const name = cols[nameIdx]?.trim();
+    const lat = parseFloat(cols[latIdx]);
+    const lon = parseFloat(cols[lonIdx]);
+
+    stopNames[rawId] = name;
+    stopDetails[rawId] = { name, lat, lon };
+  }
+}
 
     async function loadDelays() {
   const res = await fetch('https://crimson-night-b53e.fujimaru703.workers.dev/');
