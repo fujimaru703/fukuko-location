@@ -492,7 +492,7 @@ async function loadStops() {
   }
 }
 
-    async function loadDelays() {
+   async function loadDelays() {
   const res = await fetch('https://crimson-night-b53e.fujimaru703.workers.dev/');
   const data = await res.json();
   tripDelays = {};
@@ -506,19 +506,17 @@ async function loadStops() {
         const rawStopId = update?.stopId;
         const stopId = rawStopId ? rawStopId.replace(/^"|"$/g, '').trim() : '';
 
-        let delay = 0;
-        let arrivalTime = null;
-        let departureTime = null;
+        let d = 0;
+        if (update?.departure?.delay != null) d = update.departure.delay;
+        else if (update?.arrival?.delay != null) d = update.arrival.delay;
 
-        if (update?.departure?.delay != null) delay = update.departure.delay;
-        else if (update?.arrival?.delay != null) delay = update.arrival.delay;
-
-        if (update?.arrival?.time != null) arrivalTime = update.arrival.time;
-        if (update?.departure?.time != null) departureTime = update.departure.time;
+        // ⬇️ 到着・出発時刻を取得して保存
+        const arrivalTime = update?.arrival?.time || null;
+        const departureTime = update?.departure?.time || null;
 
         if (typeof seq === 'number') {
           delayMap[seq] = {
-            delay: delay,
+            delay: d,
             stopId: stopId,
             arrivalTime: arrivalTime,
             departureTime: departureTime
@@ -529,6 +527,7 @@ async function loadStops() {
     }
   }
 }
+
 
 
     async function showDelayedBusHeatmap() {
