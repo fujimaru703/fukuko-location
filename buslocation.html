@@ -68,8 +68,8 @@
   border: 1px solid #ccc !important;
   border-radius: 8px !important;
 }
-
-   .stop-label-text {
+  
+.stop-label-text {
   font-size: 12px;
   background-color: rgba(255, 255, 255, 0.85);
   padding: 2px 6px;
@@ -77,7 +77,8 @@
   border-radius: 4px;
   white-space: nowrap;
 }
-  </style>
+
+</style>
 </head>
 <body>
 	<header>
@@ -567,7 +568,7 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
 
   // 両方をレイヤーグループにまとめて管理
   window.lastShapeLine = L.layerGroup([outerLine, innerLine]).addTo(map);
-		 // --- これから通るバス停を Haltestelle.png でプロット + ラベル ---
+  // --- これから通るバス停を Haltestelle.png でプロット + ラベル ---
   if (window.futureHaltestelleMarkers) {
     window.futureHaltestelleMarkers.forEach(m => map.removeLayer(m));
   }
@@ -600,6 +601,7 @@ label234.forEach(label => labelIconMap.set(label, 'icon/234.png'));
 
     window.futureHaltestelleMarkers.push(iconMarker, labelMarker);
   }
+
 });
 
 
