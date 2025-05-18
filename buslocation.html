@@ -730,6 +730,19 @@ for (const [seqStr, info] of Object.entries(updates)) {
       updateTimestamp();
     }
 
+	  // 地図クリック時にルートとバス停マーカーを削除
+map.on('click', function () {
+  // ルート（shapes）の表示を消す
+  if (window.lastShapeLine) {
+    map.removeLayer(window.lastShapeLine);
+    window.lastShapeLine = null;
+  }
+
+  // バス停マーカーの削除
+  stopMarkers.forEach(m => map.removeLayer(m));
+  stopMarkers = [];
+});
+
     window.addEventListener('load', () => {
       updateAll();
       setInterval(updateAll, 15000);
