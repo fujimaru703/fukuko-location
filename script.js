@@ -41,7 +41,7 @@ const routeNames = {};
 const tripHeadsigns = {};
 const stopNames = {};
 let shapeMap = {};
-let tripShapeMap = {};　
+let tripShapeMap = {};
 let stopMap = {};
 let stopMarkers = [];
 
@@ -621,7 +621,6 @@ async function showDelayedBusHeatmap() {
 
 					const marker = L.marker([stop.lat, stop.lon], {
 						icon: L.icon({
-							iconUrl: 'icon/Haltestelle.png',
 							iconUrl: 'icon/fukuko-daisukiclub.png',
 							iconSize: [24, 24],
 							iconAnchor: [12, 12]
@@ -637,12 +636,6 @@ async function showDelayedBusHeatmap() {
 							className: 'busstop-label'
 						});
 					}
-					marker.bindTooltip(labelText, {
-						permanent: true,
-						direction: 'right',
-						offset: [18, 0],
-						className: 'busstop-label'
-					});
 
 					stopMarkers.push(marker);
 				}
