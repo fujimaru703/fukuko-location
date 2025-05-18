@@ -377,7 +377,7 @@ async function loadTrips() {
 		const cols = line.split(',');
 
 		const rawTripId = cols[idIdx];
-		const tripId = rawTripId?.replace(/^"|"$/g, '').trim();
+		const tripId = (rawTripId?.replace(/^"|"$/g, ''))?.trim();
 		const headsign = cols[headIdx]?.trim();
 		const shapeId = cols[shapeIdx]?.trim();
 
