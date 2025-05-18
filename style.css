@@ -26,17 +26,20 @@ footer {
 #timestampDisplay {
   position: absolute;
   top: 10px;
-  right: 10px;  /* ← 右上に固定 */
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 1000;
   background: rgba(255, 255, 255, 0.8);
   padding: 6px 12px;
   font-size: 14px;
   font-weight: bold;
   border-radius: 6px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.3);
+  pointer-events: none; /* ← 地図の操作を妨げない */
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
   pointer-events: none;
+  /* ← 地図の操作を妨げない */
 }
-
 
 
 #pageTitle {
@@ -56,4 +59,3 @@ footer {
 
 .leaflet-tooltip.busstop-label::before {
   display: none;
-}
