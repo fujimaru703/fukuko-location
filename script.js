@@ -46,32 +46,6 @@ const map = L.map('map').setView([37.75, 140.47], 13);
 	let stopMap = {};
 	let stopMarkers = [];
 
-	L.easyButton({
-		states: [{
-			stateName: 'heatmap-on',
-			icon: '🔥',
-			title: 'ヒートマップを非表示',
-			onClick: function(btn, map) {
-				if (heatLayer && map.hasLayer(heatLayer)) {
-					map.removeLayer(heatLayer);
-					heatmapVisible = false;
-					btn.state('heatmap-off');
-				}
-			}
-		}, {
-			stateName: 'heatmap-off',
-			icon: '🔥',
-			title: 'ヒートマップを表示',
-			onClick: function(btn, map) {
-				if (heatLayer && !map.hasLayer(heatLayer)) {
-					heatLayer.addTo(map);
-					heatmapVisible = true;
-					btn.state('heatmap-on');
-				}
-			}
-		}]
-	}).addTo(map);
-
 	const labelIconMap = new Map();
 	const label290 = ['2007', '8015', '8016', '8037', '8038', '8057', '8058',
 		'8059', '8077', '8078', '8079', '8081', '8101', '8102', '0873', '0874',
