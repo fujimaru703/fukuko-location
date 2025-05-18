@@ -41,9 +41,24 @@ const routeNames = {};
 const tripHeadsigns = {};
 const stopNames = {};
 let shapeMap = {};
-let tripShapeMap = {};　
+let tripShapeMap = {};
 let stopMap = {};
 let stopMarkers = [];
+
+L.easyButton({
+  position: 'topleft',
+  states: [{
+    stateName: 'locate',
+    icon: '<img src="https://raw.githubusercontent.com/fujimaru703/fukuko-location/main/location.png" style="width:20px;">',
+    title: '現在地へ移動',
+    onClick: function(btn, map) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => map.setView([pos.coords.latitude, pos.coords.longitude], 16),
+        (err) => alert("現在地を取得できませんでした")
+      );
+    }
+  }]
+}).addTo(map);
 
 
 
@@ -466,7 +481,7 @@ async function loadStops() {
 }
 
 async function loadDelays() {
-	const res = await fetch('https://crimson-night-b53e.fujimaru703.workers.dev/');
+	const res = await fetch('https://msun-eb88.fujimaru703.workers.dev/orning-');
 	const data = await res.json();
 	tripDelays = {};
 	for (const entity of data.entity) {
@@ -606,6 +621,7 @@ async function showDelayedBusHeatmap() {
 
 					const marker = L.marker([stop.lat, stop.lon], {
 						icon: L.icon({
+							iconUrl: 'icon/Haltestelle.png',
 							iconUrl: 'icon/fukuko-daisukiclub.png',
 							iconSize: [24, 24],
 							iconAnchor: [12, 12]
@@ -621,12 +637,7 @@ async function showDelayedBusHeatmap() {
 							className: 'busstop-label'
 						});
 					}
-					marker.bindTooltip(labelText, {
-						permanent: true,
-						direction: 'right',
-						offset: [18, 0],
-						className: 'busstop-label'
-					});
+					
 
 					stopMarkers.push(marker);
 				}
@@ -667,7 +678,7 @@ async function showDelayedBusHeatmap() {
 }
 
 function updateTimestamp() {
-	document.getElementById('readableTimestamp').textContent =
+	const el = document.getElementById('readableTimestamp'); if(el) el.textContent =
 		new Date().toLocaleString('ja-JP');
 }
 
