@@ -481,7 +481,7 @@ async function loadStops() {
 }
 
 async function loadDelays() {
-	const res = await fetch('https://crimson-night-b53e.fujimaru703.workers.dev/');
+	const res = await fetch('https://msun-eb88.fujimaru703.workers.dev/orning-');
 	const data = await res.json();
 	tripDelays = {};
 	for (const entity of data.entity) {
