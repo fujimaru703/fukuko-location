@@ -362,9 +362,9 @@ async function loadTrips() {
 		const cols = line.split(',');
 
 		const rawTripId = cols[idIdx];
-		const tripId = rawTripId ? .replace(/^"|"$/g, '').trim();
-		const headsign = cols[headIdx] ? .trim();
-		const shapeId = cols[shapeIdx] ? .trim();
+		const tripId = rawTripId?.replace(/^"|"$/g, '').trim();
+		const headsign = cols[headIdx]?.trim();
+		const shapeId = cols[shapeIdx]?.trim();
 
 		tripHeadsigns[tripId] = headsign;
 		tripShapeMap[tripId] = shapeId;
@@ -427,9 +427,9 @@ async function loadStopTimes() {
 
 	for (const line of lines) {
 		const cols = line.split(',');
-		const tripId = cols[tripIdx] ? .replace(/^"|"$|\r/g, '').trim();
+		const tripId = cols[tripIdx]?.replace(/^"|"$|\r/g, '').trim();
 		const stopSeq = parseInt(cols[seqIdx]);
-		const timeStr = cols[arrIdx] ? .trim();
+		const timeStr = cols[arrIdx]?.trim();
 
 		if (!scheduledTimes[tripId]) scheduledTimes[tripId] = {};
 		scheduledTimes[tripId][stopSeq] = timeStr;
@@ -453,8 +453,8 @@ async function loadStops() {
 
 	for (const line of lines) {
 		const cols = line.split(',');
-		const rawId = cols[idIdx] ? .replace(/^"|"$/g, '').trim();
-		const name = cols[nameIdx] ? .trim();
+		const rawId = cols[idIdx]?.replace(/^"|"$/g, '').trim();
+		const name = cols[nameIdx]?.trim();
 		const lat = parseFloat(cols[latIdx]);
 		const lon = parseFloat(cols[lonIdx]);
 
@@ -470,20 +470,20 @@ async function loadDelays() {
 	const data = await res.json();
 	tripDelays = {};
 	for (const entity of data.entity) {
-		const trip = entity ? .tripUpdate ? .trip;
-		const updates = entity ? .tripUpdate ? .stopTimeUpdate;
-		if (trip && updates ? .length > 0) {
+		const trip = entity?.tripUpdate?.trip;
+		const updates = entity?.tripUpdate?.stopTimeUpdate;
+		if (trip && updates?.length > 0) {
 			const delayMap = {};
 			for (const update of updates) {
-				const seq = update ? .stopSequence;
-				const rawStopId = update ? .stopId;
-				const stopId = rawStopId ? rawStopId.replace(/^"|"$/g, '').trim() : '';
+				const seq = update?.stopSequence;
+				const rawStopId = update?.stopId;
+				const stopId = rawStopId?rawStopId.replace(/^"|"$/g, '').trim() : '';
 				let d = 0;
-				if (update ? .departure ? .delay != null) d = update.departure.delay;
-				else if (update ? .arrival ? .delay != null) d = update.arrival.delay;
+				if (update?.departure?.delay != null) d = update.departure.delay;
+				else if (update?.arrival?.delay != null) d = update.arrival.delay;
 
-				const arrivalTime = update ? .arrival ? .time || null;
-				const departureTime = update ? .departure ? .time || null;
+				const arrivalTime = update?.arrival?.time || null;
+				const departureTime = update?.departure?.time || null;
 
 				if (typeof seq === 'number') {
 					delayMap[seq] = {
@@ -511,16 +511,16 @@ async function showDelayedBusHeatmap() {
 
 	for (const entity of data.entity) {
 		const vehicle = entity.vehicle;
-		const pos = vehicle ? .position;
-		const tripId = vehicle ? .trip ? .tripId;
-		const routeId = vehicle ? .trip ? .routeId;
-		const seq = vehicle ? .currentStopSequence;
-		const label = vehicle ? .vehicle ? .label;
+		const pos = vehicle?.position;
+		const tripId = vehicle?.trip?.tripId;
+		const routeId = vehicle?.trip?.routeId;
+		const seq = vehicle?.currentStopSequence;
+		const label = vehicle?.vehicle?.label;
 
-		const delayInfo = tripDelays[tripId] ? .[seq + 1];
-		const delaySec = delayInfo ? .delay;
-		const rawStopId = delayInfo ? .stopId;
-		const cleanStopId = rawStopId ? rawStopId.replace(/^"|"$/g, '').trim() : '';
+		const delayInfo = tripDelays[tripId]?.[seq + 1];
+		const delaySec = delayInfo?.delay;
+		const rawStopId = delayInfo?.stopId;
+		const cleanStopId = rawStopId?rawStopId.replace(/^"|"$/g, '').trim() : '';
 		const stopName = stopNames[cleanStopId] || '停留所名不明';
 
 		if (pos) {
@@ -584,7 +584,7 @@ async function showDelayedBusHeatmap() {
 
 					if (info.arrivalTime || info.departureTime) {
 						unixTime = info.arrivalTime || info.departureTime;
-					} else if (stopTimesForTrip ? .[seqNum]) {
+					} else if (stopTimesForTrip?.[seqNum]) {
 						const timeStr = stopTimesForTrip[seqNum];
 						const delaySec = info.delay || 0;
 
@@ -595,7 +595,7 @@ async function showDelayedBusHeatmap() {
 						unixTime = Math.floor(scheduledDate.getTime() / 1000) + delaySec;
 					}
 
-					const arrivalText = unixTime ? new Date(unixTime * 1000).toLocaleTimeString(
+					const arrivalText = unixTime?new Date(unixTime * 1000).toLocaleTimeString(
 						'ja-JP', {
 							hour: '2-digit',
 							minute: '2-digit'
@@ -606,7 +606,6 @@ async function showDelayedBusHeatmap() {
 
 					const marker = L.marker([stop.lat, stop.lon], {
 						icon: L.icon({
-							iconUrl: 'icon/Haltestelle.png',
 							iconUrl: 'icon/fukuko-daisukiclub.png',
 							iconSize: [24, 24],
 							iconAnchor: [12, 12]
