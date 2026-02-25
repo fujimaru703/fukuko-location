@@ -1,39 +1,96 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>福島交通ロケーションマップ</title>
-    <!-- Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-easybutton/src/easy-button.css" />
-    <style> :root{ --bg: #0b1020; --panel: rgba(255,255,255,.10); --panel2: rgba(255,255,255,.14); --text: rgba(255,255,255,.92); --muted: rgba(255,255,255,.68); --border: rgba(255,255,255,.18); } html, body { height: 100%; margin: 0; } body{ font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; background: radial-gradient(1000px 600px at 20% 10%, #1a2a6c 0%, transparent 60%), radial-gradient(900px 500px at 80% 30%, #b21f1f 0%, transparent 55%), radial-gradient(800px 500px at 40% 90%, #0f9b8e 0%, transparent 55%), var(--bg); color: var(--text); overflow: hidden; } .app{ height: 100%; display: flex; flex-direction: column; } .topbar{ height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; backdrop-filter: blur(10px); background: var(--panel); border-bottom: 1px solid var(--border); z-index: 10000; } .brand .title{ font-weight: 800; letter-spacing: .3px; } .brand .subtitle{ font-size: 12px; color: var(--muted); margin-top: 2px; } .top-actions{ display:flex; gap:10px; align-items:center; } .btn{ appearance: none; border: 1px solid var(--border); background: var(--panel2); color: var(--text); padding: 8px 12px; border-radius: 12px; font-weight: 600; cursor: pointer; } .btn:hover{ background: rgba(255,255,255,.18); } .stage{ position: relative; flex: 1; } #map{ height: 100%; width: 100%; } .hud{ position: absolute; top: 12px; right: 12px; display: grid; gap: 10px; z-index: 9999; } .card{ min-width: 190px; padding: 10px 12px; border-radius: 16px; border: 1px solid var(--border); background: var(--panel); backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,.25); } .card-label{ font-size: 11px; color: var(--muted); } .card-value{ font-size: 14px; font-weight: 700; margin-top: 2px; white-space: nowrap; } /* Leaflet controls: modern look */ .leaflet-control-layers, .leaflet-control-zoom{ border-radius: 14px !important; overflow: hidden; border: 1px solid rgba(255,255,255,.22) !important; background: rgba(15,18,30,.65) !important; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,.25); } .leaflet-control-layers-expanded{ padding: 10px 12px !important; } .leaflet-control-layers label{ color: rgba(255,255,255,.9); } .leaflet-control-zoom a{ color: rgba(255,255,255,.9) !important; background: transparent !important; } /* Bus stop tooltip label styling */ .leaflet-tooltip.busstop-label{ background: transparent; border: none; box-shadow: none; padding: 0; margin: 0; font-size: 12px; color: white; font-weight: 800; text-shadow: 0 1px 0 rgba(0,0,0,.6), 0 0 2px rgba(0,0,0,.9); } .leaflet-tooltip.busstop-label::before{ display: none; } </style>
-  </head>
-  <body>
-    <div class="app">
-      <header class="topbar">
-        <div class="brand">
-          <div class="title">福島交通ロケーションマップ</div>
-          <div class="subtitle">リアルタイム運行状況</div>
-        </div>
-        <div class="top-actions">
-          <button id="btnRefresh" class="btn">更新</button>
-        </div>
-      </header>
-      <main class="stage">
-        <div id="map"></div>
-        <div class="hud">
-          <div class="card">
-            <div class="card-label">最終更新</div>
-            <div class="card-value" id="readableTimestamp">—</div>
-          </div>
-        </div>
-      </main>
-    </div>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
-    <script src="https://unpkg.com/leaflet-easybutton/src/easy-button.js"></script>
-    <script>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>福島交通ロケーションマップ</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-easybutton/src/easy-button.css" />
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      position: relative;
+      background-color: #e7d7a8;
+      color: #000000;
+    }
+    #map {
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      z-index: 1;
+    }
+	  
+    footer {
+      position: relative;
+      height: 25px;
+      background-color: #333;
+      color: white;
+      padding: 10px;
+    }
+
+    #timestampDisplay {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 5px 10px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      font-size: 11px;
+      border-radius: 5px;
+      z-index: 9999;
+      white-space: nowrap;
+    }
+
+　　.header {
+  height: 50px;
+  background-color: #f4f4f4;
+  display: flex;
+  justify-content: center;  /* ← 中央配置 */
+  align-items: center;      /* ← 縦中央揃え */
+  font-size: 18px;
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+}
+
+#pageTitle {
+  text-align: center;
+}
+
+   .leaflet-tooltip.busstop-label {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+  color: black;
+  font-weight: bold;
+}
+
+/* 矢印（やじるし）を消す */
+.leaflet-tooltip.busstop-label::before {
+  display: none;
+}
+  </style>
+</head>
+<body>
+	<header>
+<div id="pageTitle">福島交通ロケーションマップ</div>
+		 <div id="map"></div>
+</header>
+	<footer>
+		<div id="timestampDisplay">最終更新: <span id="readableTimestamp"></span></div>
+	</footer>
+
+
+
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+  <script src="https://unpkg.com/leaflet-easybutton/src/easy-button.js"></script>
+
+  <script>
     const map = L.map('map').setView([37.75, 140.47], 13);
 
 const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
